@@ -2,11 +2,16 @@ package com.cabolabs.ehrserver
 
 import groovyx.net.http.*
 import org.apache.log4j.Logger
+import java.security.KeyStore
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.ssl.SSLSocketFactory
 
 class EhrServerClient {
 
    // TODO: operation here and job to free the cache
    def cache = [:]
+   
+   def server
    
    private Logger log = Logger.getLogger(getClass()) 
 
@@ -29,22 +34,42 @@ class EhrServerClient {
       if (!path.endsWith('/')) path += '/'
       config.server.path = path
       
+      server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      
+      if (protocol.toLowerCase().startsWith('https'))
+      {
+         println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL 
+                    Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests"""
+                    
+         /*
+          * change these lines to use your keystore.
+          */
+         def keyStore = KeyStore.getInstance( KeyStore.defaultType )
+         //println getClass().getResource( "/" ) // /bin
+         getClass().getResource( "/store.jks" ).withInputStream {
+            keyStore.load( it, "test1234".toCharArray() )
+         }
+         
+         server.client.connectionManager.schemeRegistry.register( new Scheme("https", 443, new SSLSocketFactory(keyStore)) )
+      }
+      
       println 'Base URL: '+ config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path
    }
    
    /**
     * TODO: HTTPS requires extra config
     * https://github.com/jgritman/httpbuilder/wiki/SSL
+    * .\cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.crt -keystore store.jks -storepass test1234
     */
    def login(String username, String password, String orgnumber)
    {
       // service login
       // set token on session
-      def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      //def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
          // Sin URLENC da error null pointer exception sin mas datos... no se porque es. PREGUNTAR!
-         def res = ehr.post(
+         def res = server.post(
             path:'rest/login',
             requestContentType: ContentType.URLENC,
             body: [username: username, password: password, organization: orgnumber]
@@ -52,217 +77,47 @@ class EhrServerClient {
          
          config.token = res.responseData.token
          
+         //println "token: "+ config.token
+         
          // token
          return res.responseData.token
       }
       catch (Exception e)
       {
-         // FIXME: log a disco
-         println "except 2:" + e.message
          e.printStackTrace(System.out)
       }
    }
    
-   
-   /**
-    * Get a list of patients from the server.
-    * @return
-    */
-   def getPatients(int max = 20)
-   {      
-      /**
-       * Con timeout:
-       *
-       * def http = new HTTPBuilder( args[0] )
-        http.request(GET,HTML) { req ->
-          headers.'User-Agent' = 'GroovyHTTPBuilderTest/1.1'
-          headers.'Referer' = 'http://blog.techstacks.com/'
-      
-          // Begin: java code to set HTTP Parameters/Properties
-          // Groovy HTTPBuilder doesn't provide convenience methods
-          // for many of these yet.
-          req.getParams().setParameter("http.connection.timeout", new Integer(5000));
-          req.getParams().setParameter("http.socket.timeout", new Integer(5000));
-          // End java code to set HTTP Parameters/Properties
-      
-          response.success = { resp, html ->
-            println "Server Response: ${resp.statusLine}"
-            println "Server Type: ${resp.getFirstHeader('Server')}"
-            println "Title: ${html.HEAD.TITLE.text()}"
-          }
-          response.failure = { resp ->
-            println resp.statusLine
-          }
-        }
-       */
-      
-      // TIMER
-      def start = System.currentTimeMillis()
-      
-      def patientList = []
-      
-      log.info( "Consulta al EHR: "+ config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path +'rest/patientList')
-      
-      def http = new HTTPBuilder(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path +'rest/patientList')
-      
-      // Si no hay conexion con el servidor tira excepcion
-      try
-      {
-         // perform a GET request, expecting TEXT response data
-         http.request( Method.GET, ContentType.JSON ) { req ->
-           
-           //uri.path = '/ajax/services/search/web'
-           //uri.query = [ v:'1.0', q: 'Calvin and Hobbes' ]
-           uri.query = [ format: 'json', max: max ] // TODO: max/offset are not implemented yet
-         
-           headers.'User-Agent' = 'Mozilla/5.0 Ubuntu/8.10 Firefox/3.0.4'
-           headers.'Authorization' = 'Bearer '+ config.token
-           
-           // Begin: java code to set HTTP Parameters/Properties
-           // Groovy HTTPBuilder doesn't provide convenience methods
-           // for many of these yet.
-           req.getParams().setParameter("http.connection.timeout", new Integer(10000));
-           req.getParams().setParameter("http.socket.timeout", new Integer(10000));
-           // End java code to set HTTP Parameters/Properties
-         
-           // response handler for a success response code:
-           response.success = { resp, json ->
-           
-              // con XML, xml es groovy.util.slurpersupport.NodeChild
-              // con TEXT, xml es InputStreamReader con .text me da el string
-              
-              //println json
-              /*
-              data = [
-                 patients: [...],
-                 pagination: [
-                    max, offset, nextOffset, prevOffset
-                 ]
-              ]
-              */
-              
-              //println xml.uid // on json los datos estan como maps
-              patientList = json.patients
-              
-              // Caches the result
-              patientList.each { patient ->
-                 cache[patient.uid] = patient
-              }
-           }
-         
-           // handler for any failure status code:
-           response.failure = { resp ->
-              
-              println "response: " + resp.getAllHeaders() + " curr thrd id: " + Thread.currentThread().getId()
-              
-              //println "Unexpected error: ${resp.statusLine.statusCode} : ${resp.statusLine.reasonPhrase}"
-              throw new Exception("Unexpected error: ${resp.statusLine.statusCode} : ${resp.statusLine.reasonPhrase}")
-           }
-         }
-      }
-      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
-      {
-         log.error ( e.message )
-         //g.message(code:'patient.patientList.error.noServer') )
-      }
-      catch (groovyx.net.http.HttpResponseException e) // hay conectividad pero da un error del lado del servidor
-      {
-         // TODO: log a disco
-         log.error ( e.message )
-         // g.message(code:'patient.patientList.error.serverError')
-         
-         /*
-         // te doy datos de mentira :D
-         patientList = [
-            [uid:'1235-5756', firstName:'Carlos', lastName:'Nuñez',  dob:'19260225', sex:'M', idCode:'123456', idType:'CI'],
-            [uid:'2556-3434', firstName:'Petra',  lastName:'Cabeza', dob:'19990912', sex:'F', idCode:'569790', idType:'CI'],
-            [uid:'3457-2443', firstName:'Ronco',  lastName:'Vaca',   dob:'19810230', sex:'M', idCode:'247288', idType:'CI'],
-         ]
-         */
-      }
-      
-      return patientList
-   }
-   
-   /**
-    * Get a patient by uid from the server or local cache.
-    * @param uid
-    * @return
-    */
-   def getPatient(String uid)
+   def Object getProfile(String username)
    {
-      if (cache[uid])
-      {
-         log.info("Cache hit for patient $uid")
-         return cache[uid]
-      }
+      def res
+      def profile
       
-      log.info("Cache miss for patient $uid, querying the server")
-      
-      def http = new HTTPBuilder(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path +'rest/getPatient')
-      
-      // Si no hay conexion con el servidor tira excepcion
       try
       {
-         // perform a GET request, expecting TEXT response data
-         http.request( Method.GET, ContentType.JSON ) { req ->
-            
-            //uri.path = '/ajax/services/search/web'
-            //uri.query = [ v:'1.0', q: 'Calvin and Hobbes' ]
-            uri.query = [ format: 'json', uid: uid ]
-          
-            headers.'User-Agent' = 'Mozilla/5.0 Ubuntu/8.10 Firefox/3.0.4'
-            headers.'Authorization' = 'Bearer '+ config.token
-            
-            // Begin: java code to set HTTP Parameters/Properties
-            // Groovy HTTPBuilder doesn't provide convenience methods
-            // for many of these yet.
-            req.getParams().setParameter("http.connection.timeout", new Integer(10000));
-            req.getParams().setParameter("http.socket.timeout", new Integer(10000));
-            // End java code to set HTTP Parameters/Properties
-          
-            // response handler for a success response code:
-            response.success = { resp, json ->
-            
-               //println json
-               /* es un map...
-               [uid:3fe33dee-0a9a-43cd-a2b7-ce88b25734ba,
-               firstName:Pablo,
-               lastName:Pazos,
-               dob:19811024,
-               sex:M,
-               idCode:4116238-0,
-               idType:CI]
-               */
-               cache[uid] = json
-            }
-          
-            // handler for any failure status code:
-            response.failure = { resp ->
-               
-               println "response: " + resp.getAllHeaders() + " curr thrd id: " + Thread.currentThread().getId()
-               
-               //println "Unexpected error: ${resp.statusLine.statusCode} : ${resp.statusLine.reasonPhrase}"
-               throw new Exception("Unexpected error: ${resp.statusLine.statusCode} : ${resp.statusLine.reasonPhrase}")
-            }
-         }
+
+         // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
+         // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
+         res = server.get( path: 'rest/profile/'+ username,
+                          query: [format:'json'],
+                          headers: ['Authorization': 'Bearer '+ config.token] )
+
+         profile = res.data
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
       {
-         println e.message
-         flash.message = g.message(code:'registros.list.error.noServer')
+         log.error( e.message )
+         return
       }
-      catch (groovyx.net.http.HttpResponseException e) // hay conectividad pero da un error del lado del servidor
+      catch (groovyx.net.http.HttpResponseException e)
       {
-         // TODO: log a disco
-         println e.message
-         flash.message = g.message(code:'registros.list.error.serverError')
+         log.error( e.response.data ) //.message.text() )
+         return
       }
       
-      return cache[uid]
+      return profile
       
-   } // getPatient
-   
+   } // getProfile
    
    def String getEhrIdByPatientId(String patientUid)
    {

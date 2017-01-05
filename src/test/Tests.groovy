@@ -13,7 +13,8 @@ class Tests extends GroovyTestCase {
    protected void setUp()
    {
       println ""
-      client = new EhrServerClient('http://', 'cabolabs-ehrserver.rhcloud.com', 80, '/ehr/')
+      // port 80 for http, port 443 for https
+      client = new EhrServerClient('https://', 'ehrserver-cabolabs2.rhcloud.com', 443, '/')
    }
    protected void tearDown()
    {
@@ -26,19 +27,16 @@ class Tests extends GroovyTestCase {
       //println "login this token " + client.config.token
    }
    
-   void test_patients()
+   void test_profile()
    {
-      client.login('orgman', 'orgman', '1234')
-
-      def patients = client.getPatients()
-      
-      assert patients.size() > 0
-      
-      patients.each {
-         println it.firstName
-      }
+     def token = client.login('orgman', 'orgman', '1234')
+     def profile = client.getProfile('orgman')
+     
+     assert profile != null
+     assert profile.username == 'orgman'
    }
    
+   /*
    void test_ehrs()
    {
       client.login('orgman', 'orgman', '1234')
@@ -86,4 +84,5 @@ class Tests extends GroovyTestCase {
          println it.archetypeId
       }
    }
+   */
 }
