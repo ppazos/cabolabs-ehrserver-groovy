@@ -36,7 +36,7 @@ class Tests extends GroovyTestCase {
      assert profile.username == 'orgman'
    }
    
-   /*
+   
    void test_ehrs()
    {
       client.login('orgman', 'orgman', '1234')
@@ -49,6 +49,7 @@ class Tests extends GroovyTestCase {
       }
    }
    
+   /*
    void test_ehruid_for_patient()
    {
       client.login('orgman', 'orgman', '1234')

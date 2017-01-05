@@ -183,20 +183,14 @@ class EhrServerClient {
    {
       def res
       def ehrs
-      
-      // Pide datos al EHR Server
-      def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
-      
-      
-      // Lookup de ehrId por subjectId
-      // FIXME: esto se puede evitar si viene el dato con el paciente
+
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'rest/ehrs',
-                        query: [format:'json'],
-                        headers: ['Authorization': 'Bearer '+ config.token] )
+         server.get( path: 'rest/ehrs',
+                     query: [format:'json'],
+                     headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
          
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
@@ -211,27 +205,6 @@ class EhrServerClient {
       }
       catch (groovyx.net.http.HttpResponseException e)
       {
-         // puedo acceder al response usando la excepci?n!
-         // 500 class groovyx.net.http.HttpResponseDecorator
-         println e.response.status.toString() +" "+ e.response.class.toString()
-         
-         // errorEHR no encontrado para el paciente $subjectId, se debe crear un EHR para el paciente
-         println e.response.data
-         
-         // WARNING: es el XML parseado, no el texto en bruto!
-         // class groovy.util.slurpersupport.NodeChild
-         println e.response.data.getClass()
-         
-         // Procesando el XML
-         println e.response.data.code.text() // error
-         println e.response.data.message.text() // el texto
-         
-         // text/xml
-         println e.response.contentType
-         
-         // TODO: log a disco
-         // no debe serguir si falla el lookup
-         //render "Ocurrio un error al obtener el ehr del paciente "+ e.message
          log.error( e.response.data.message.text() )
          return
       }
