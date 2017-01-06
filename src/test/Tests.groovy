@@ -20,6 +20,7 @@ class Tests extends GroovyTestCase {
    {
    }
    
+   
    void test_login()
    {
       def token = client.login('orgman', 'orgman', '1234') // stores token internally
@@ -47,6 +48,39 @@ class Tests extends GroovyTestCase {
       res.ehrs.each {
          println it.uid
       }
+   }
+   
+   
+   void test_get_ehr()
+   {
+      client.login('orgman', 'orgman', '1234')
+      def res = client.getEhrs()
+      
+      assert res.ehrs.size() > 0
+      
+      String uid = res.ehrs[0].uid
+      
+      def ehr = client.getEhr(uid)
+      
+      assert ehr != null
+      
+      assert ehr.uid == uid
+   }
+   
+   void test_get_ehr_by_subject()
+   {
+      client.login('orgman', 'orgman', '1234')
+      def res = client.getEhrs()
+      
+      assert res.ehrs.size() > 0
+      
+      String subjectUid = res.ehrs[0].subjectUid
+      
+      def ehr = client.getEhrIdByPatientId(subjectUid)
+      
+      assert ehr != null
+      
+      assert ehr.subjectUid == subjectUid
    }
    
    /*

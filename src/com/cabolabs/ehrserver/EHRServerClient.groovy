@@ -39,7 +39,7 @@ class EhrServerClient {
       if (protocol.toLowerCase().startsWith('https'))
       {
          println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL 
-                    Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests"""
+Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests"""
                     
          /*
           * change these lines to use your keystore.
@@ -119,28 +119,21 @@ class EhrServerClient {
       
    } // getProfile
    
-   def String getEhrIdByPatientId(String patientUid)
+   def Object getEhr(String uid)
    {
       def res
-      def ehrUid
+      def ehr
       
-      // Pide datos al EHR Server
-      def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
-      
-      
-      // Lookup de ehrId por subjectId
-      // FIXME: esto se puede evitar si viene el dato con el paciente
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         res = ehr.get( path: 'rest/ehrForSubject',
-                        query: [subjectUid:patientUid, format:'json'],
+         res = server.get( path: 'rest/ehrs/ehrUid/'+ uid,
+                        query: [format:'json'],
                         headers: ['Authorization': 'Bearer '+ config.token] )
-         
-         // FIXME: el paciente puede existir y no tener EHR, verificar si devuelve el EHR u otro error, ej. paciente no existe...
-         // WONTFIX: siempre tira una excepcion en cada caso de error porque el servidor tira error 500 not found en esos casos.
-         ehrUid = res.data.uid
+
+         println res
+         ehr = res.data
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
       {
@@ -174,7 +167,55 @@ class EhrServerClient {
          return
       }
       
-      return ehrUid
+      return ehr
+      
+   } // getEhr
+   
+   
+   
+   def Object getEhrIdByPatientId(String patientUid)
+   {
+      def res
+      def ehr
+
+      try
+      {
+         res = server.get( path: 'rest/ehrs/subjectUid/'+patientUid,
+                        query: [format:'json'],
+                        headers: ['Authorization': 'Bearer '+ config.token] )
+
+         ehr = res.data
+      }
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      {
+         log.error( e.message )
+         return
+      }
+      catch (groovyx.net.http.HttpResponseException e)
+      {
+         // puedo acceder al response usando la excepci?n!
+         // 500 class groovyx.net.http.HttpResponseDecorator
+         println e.response.status.toString() +" "+ e.response.class.toString()
+         
+         // errorEHR no encontrado para el paciente $subjectId, se debe crear un EHR para el paciente
+         println e.response.data
+         
+         // WARNING: es el XML parseado, no el texto en bruto!
+         // class groovy.util.slurpersupport.NodeChild
+         println e.response.data.getClass()
+         
+         // Procesando el XML
+         println e.response.data.code.text() // error
+         println e.response.data.message.text() // el texto
+         
+         // text/xml
+         println e.response.contentType
+         
+         log.error( e.response.data.message.text() )
+         return
+      }
+      
+      return ehr
       
    } // getEhrIdByPatientId
    
@@ -212,6 +253,10 @@ class EhrServerClient {
       return ehrs
       
    } // getEhrs
+   
+   
+   // TODO: add commit and test
+   
    
    def getContributions(String ehrUid, int max = 20)
    {
