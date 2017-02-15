@@ -70,7 +70,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       {
          // Sin URLENC da error null pointer exception sin mas datos... no se porque es. PREGUNTAR!
          def res = server.post(
-            path:'rest/login',
+            path:'api/v1/login',
             requestContentType: ContentType.URLENC,
             body: [username: username, password: password, organization: orgnumber]
          )
@@ -95,10 +95,9 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       
       try
       {
-
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         res = server.get( path: 'rest/profile/'+ username,
+         res = server.get( path: 'api/v1/users/'+ username,
                           query: [format:'json'],
                           headers: ['Authorization': 'Bearer '+ config.token] )
 
@@ -128,7 +127,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         res = server.get( path: 'rest/ehrs/ehrUid/'+ uid,
+         res = server.get( path: 'api/v1/ehrs/ehrUid/'+ uid,
                         query: [format:'json'],
                         headers: ['Authorization': 'Bearer '+ config.token] )
 
@@ -180,7 +179,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
 
       try
       {
-         res = server.get( path: 'rest/ehrs/subjectUid/'+patientUid,
+         res = server.get( path: 'api/v1/ehrs/subjectUid/'+patientUid,
                         query: [format:'json'],
                         headers: ['Authorization': 'Bearer '+ config.token] )
 
@@ -229,7 +228,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         server.get( path: 'rest/ehrs',
+         server.get( path: 'api/v1/ehrs',
                      query: [format:'json'],
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
@@ -271,7 +270,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'rest/contributions',
+         ehr.get( path: 'api/v1/contributions',
                         query: [ehrUid: ehrUid, format:'json', max: max],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
@@ -310,7 +309,7 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'rest/compositions',
+         ehr.get( path: 'api/v1/compositions',
                         query: [ehrUid: ehrUid, format:'json', max: max],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->

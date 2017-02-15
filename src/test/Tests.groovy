@@ -20,27 +20,25 @@ class Tests extends GroovyTestCase {
    {
    }
    
-   
    void test_login()
    {
-      def token = client.login('orgman', 'orgman', '1234') // stores token internally
+      def token = client.login('orgman', 'orgman', '123456') // stores token internally
       assert token != null
       //println "login this token " + client.config.token
    }
    
    void test_profile()
    {
-     def token = client.login('orgman', 'orgman', '1234')
+     def token = client.login('orgman', 'orgman', '123456')
      def profile = client.getProfile('orgman')
      
      assert profile != null
      assert profile.username == 'orgman'
    }
    
-   
    void test_ehrs()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def res = client.getEhrs()
       
       assert res.ehrs.size() > 0
@@ -50,10 +48,9 @@ class Tests extends GroovyTestCase {
       }
    }
    
-   
    void test_get_ehr()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def res = client.getEhrs()
       
       assert res.ehrs.size() > 0
@@ -69,7 +66,7 @@ class Tests extends GroovyTestCase {
    
    void test_get_ehr_by_subject()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def res = client.getEhrs()
       
       assert res.ehrs.size() > 0
@@ -86,7 +83,7 @@ class Tests extends GroovyTestCase {
    /*
    void test_ehruid_for_patient()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def patients = client.getPatients()
       def ehr_uid = client.getEhrIdByPatientId( patients[0].uid )
       println "EHR UID: "+ ehr_uid
@@ -94,7 +91,7 @@ class Tests extends GroovyTestCase {
    
    void test_ehr_contributions()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def patients = client.getPatients()
       def ehr_uid = client.getEhrIdByPatientId( patients[0].uid )
       def res = client.getContributions( ehr_uid, 10 )
@@ -106,7 +103,7 @@ class Tests extends GroovyTestCase {
    
    void test_ehr_compositions()
    {
-      client.login('orgman', 'orgman', '1234')
+      client.login('orgman', 'orgman', '123456')
       def patients = client.getPatients()
       def ehr_uid = client.getEhrIdByPatientId( patients[0].uid )
       def res = client.getCompositions( ehr_uid, 10 )
