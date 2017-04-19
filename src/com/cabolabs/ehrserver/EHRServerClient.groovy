@@ -13,7 +13,7 @@ class EhrServerClient {
    
    def server
    
-   private Logger log = Logger.getLogger(getClass()) 
+   private Logger log = Logger.getLogger(EhrServerClient.class) 
 
    def config = [
       server: [
@@ -39,7 +39,8 @@ class EhrServerClient {
       if (protocol.toLowerCase().startsWith('https'))
       {
          println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL 
-Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests"""
+Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests
+cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.crt -keystore store.jks -storepass test1234"""
                     
          /*
           * change these lines to use your keystore.
@@ -57,9 +58,16 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
    }
    
    /**
-    * TODO: HTTPS requires extra config
-    * https://github.com/jgritman/httpbuilder/wiki/SSL
-    * .\cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.crt -keystore store.jks -storepass test1234
+    * Set token directly from organization API key, no need to call login on this case.
+    */
+   def setAPIKey(String token)
+   {
+      config.token = token
+      return token
+   }
+   
+   /**
+    * Get token from login endpoint.
     */
    def login(String username, String password, String orgnumber)
    {
@@ -110,10 +118,20 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       }
       catch (groovyx.net.http.HttpResponseException e)
       {
+      /*
+      Unauthorized
+      401
+      [result:Unauthorized to access user info]
+      Unauthorized to access user info
+      println e.message
+      println e.response.status
+      println e.response.data
+      println e.response.data.result
+      */
          log.error( e.response.data ) //.message.text() )
          return
       }
-      
+
       return profile
       
    } // getProfile
@@ -334,4 +352,41 @@ Use the cabolabs2.crt certificate and the store.jks keystore from this project t
       return res
       
    } // getConmpositions
+
+   
+   
+   def query(String queryUid, String ehrUid, String format = 'json')
+   {
+      def res
+      def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      try
+      {
+         api.get( path: 'api/v1/queries/'+ queryUid +'/execute',
+                        query: [ehrUid: ehrUid, format: format],
+                        headers: ['Authorization': 'Bearer '+ config.token] )
+         { resp, data ->
+         
+            //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
+            //println resp.data // nyll
+
+            res = data // json (class groovy.json.internal.LazyMap) or xml
+            //println "JSON "+ ehrs +" "+ ehrs.getClass()
+         }
+      }
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      {
+         log.error( e.message )
+         return
+      }
+      catch (groovyx.net.http.HttpResponseException e)
+      {
+         log.error( e.response.data )
+         println "ERROR: "+ e.response.data +" "+ e. message
+         return
+      }
+      
+      return res
+      
+   } // query
+   
 }
