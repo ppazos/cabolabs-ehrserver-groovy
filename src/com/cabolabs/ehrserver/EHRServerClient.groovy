@@ -355,14 +355,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
 
    
    
-   def query(String queryUid, String ehrUid, String format = 'json')
+   def query(String queryUid, String ehrUid, String fromDate, String format = 'json')
    {
       def res
       def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
          api.get( path: 'api/v1/queries/'+ queryUid +'/execute',
-                        query: [ehrUid: ehrUid, format: format],
+                        query: [ehrUid: ehrUid, format: format, fromDate: fromDate],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
          

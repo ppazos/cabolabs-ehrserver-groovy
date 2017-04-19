@@ -144,6 +144,7 @@ class Tests extends GroovyTestCase {
        */
       def res = client.query('7d125791-9f16-4b9b-a121-8b1238b59cb5',
                              'c35dfe02-4ece-465e-9433-0540c6d95f3f',
+                             (new Date() - 365).format('yyyyMMdd'),
                              'json')
       
       println res.results.size()
