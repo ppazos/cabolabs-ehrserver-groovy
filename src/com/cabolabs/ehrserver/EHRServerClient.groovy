@@ -5,6 +5,13 @@ import org.apache.log4j.Logger
 import java.security.KeyStore
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
+import static groovyx.net.http.ContentType.XML
+
+/**
+ * TODO: show status code on exceptions: e.response.status.toString() + e.message << status=400 message=Bad Request
+ * on case of 4xx or 5xx errors, the body of the response with the error message is on e.response.data
+ */
+ 
 
 class EhrServerClient {
 
@@ -258,12 +265,15 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
       {
+         println "A1"
          log.error( e.message )
          return
       }
       catch (groovyx.net.http.HttpResponseException e)
       {
-         log.error( e.response.data.message.text() )
+         println "A2 "+ e.message +" "+ e.cause
+         log.error( e.message )
+         //log.error( e.response.data.message.text() )
          return
       }
       
@@ -273,7 +283,46 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    
    
    // TODO: add commit and test
-   
+   def commit(String ehrUid, String xml, String committer, String systemId)
+   {
+      def res
+      
+      try
+      {
+         server.post( path: 'api/v1/commit',
+                     requestContentType: XML,
+                     query: [
+                        ehrUid: ehrUid,
+                        auditCommitter: committer,
+                        auditSystemId: systemId
+                     ],
+                     body: xml,
+                     headers: ['Authorization': 'Bearer '+ config.token] )
+         { resp, data ->
+         
+            //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
+            res = data
+            //println res.data // null
+            //println res.data.type // null
+            println res.code +' '+res.message
+         }
+      }
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      {
+         println "XXX"
+         log.error( e.message )
+         return
+      }
+      catch (groovyx.net.http.HttpResponseException e)
+      {
+         println "YYY "+ e.response.status.toString() +' "'+ e.message +'" '+ e.response.data.toString() +' '+ e.response.data.getClass() // XML nodechild
+         log.error( e.message )
+         //log.error( e.response.data.message.text() )
+         return
+      }
+      
+      return res
+   }
    
    def getContributions(String ehrUid, int max = 20)
    {
@@ -314,6 +363,9 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
    } // getContributions
    
+   /**
+    * Retrieves clinical document indexes from an EHR, to get the content, use a composition uid on getComposition()
+    */
    def getCompositions(String ehrUid, int max = 20)
    {
       def res
@@ -353,8 +405,39 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
    } // getConmpositions
 
+
+   def getQueries(String format = 'json', int max = 20)
+   {
+      def res
+      def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      try
+      {
+         api.get( path: 'api/v1/queries',
+                        query: [format: format],
+                        headers: ['Authorization': 'Bearer '+ config.token] )
+         { resp, data ->
+         
+            res = data // json (class groovy.json.internal.LazyMap) or xml
+         }
+      }
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      {
+         log.error( e.message )
+         return
+      }
+      catch (groovyx.net.http.HttpResponseException e)
+      {
+         log.error( e.response.data )
+         println "ERROR: "+ e.response.data +" "+ e. message
+         return
+      }
+      
+      return res
+   }
    
-   
+   /**
+    * Runs an existing query and retrieves the result sets.
+    */
    def query(String queryUid, String ehrUid, String fromDate, String format = 'json')
    {
       def res
