@@ -1,0 +1,442 @@
+<versions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openehr.org/v1"><version   xsi:type="ORIGINAL_VERSION">
+  <contribution>
+    <id xsi:type="HIER_OBJECT_ID">
+      <value>1d0f419f-816f-42e1-97c1-018ed0ea770d</value>
+    </id>
+    <namespace>EHR::COMMON</namespace>
+    <type>CONTRIBUTION</type>
+  </contribution>
+  <commit_audit>
+    <system_id>CABOLABS_EHR</system_id>
+    <committer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>caa93c4c-1a8c-4dda-bf65-dd1a35ad1673</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </committer>
+    <time_committed>
+      <value>20170524T211927,000-0300</value>
+    </time_committed>
+    <change_type>
+      <value>creation</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>249</code_string>
+      </defining_code>
+    </change_type>
+  </commit_audit>
+  <uid>
+    <value>614f29bb-8872-43b8-8328-652f13b6a4d6::EMR::1</value>
+  </uid>
+  <data xsi:type="COMPOSITION" archetype_node_id="openEHR-EHR-COMPOSITION.vaccination_list.v1">
+    <name>
+      <value>Vaccination List</value>
+    </name>
+    <uid xsi:type="HIER_OBJECT_ID">
+      <value>f81a99f3-2f8e-4c50-99bf-41d2133db2bc</value>
+    </uid>
+    <archetype_details>
+      <archetype_id>
+        <value>openEHR-EHR-COMPOSITION.vaccination_list.v1</value>
+      </archetype_id>
+      <template_id>
+        <value>Simple Vaccination Record EN</value>
+      </template_id>
+      <rm_version>1.0.2</rm_version>
+    </archetype_details>
+    <language>
+      <terminology_id>
+        <value>ISO_639-1</value>
+      </terminology_id>
+      <code_string>en</code_string>
+    </language>
+    <territory>
+      <terminology_id>
+        <value>ISO_3166-1</value>
+      </terminology_id>
+      <code_string>UY</code_string>
+    </territory>
+    <category>
+      <value>event</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>433</code_string>
+      </defining_code>
+    </category>
+    <composer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>3e81aea3-19fb-4326-a735-cf575aaed470</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </composer>
+    <context>
+      <start_time>
+        <value>20170524T211927,000-0300</value>
+      </start_time>
+      <setting>
+        <value>Hospital C</value>
+        <defining_code>
+          <terminology_id>
+            <value>openehr</value>
+          </terminology_id>
+          <code_string>229</code_string>
+        </defining_code>
+      </setting>
+    </context>
+    <content archetype_node_id="openEHR-EHR-ACTION.medication.v0" xsi:type="ACTION">
+      <name>
+        <value>Medication</value>
+      </name>
+      <language>
+        <terminology_id>
+          <value>ISO_639-1</value>
+        </terminology_id>
+        <code_string>en</code_string>
+      </language>
+      <encoding>
+        <terminology_id>
+          <value>Unicode</value>
+        </terminology_id>
+        <code_string>UTF-8</code_string>
+      </encoding>
+      <subject xsi:type="PARTY_SELF" />
+      <protocol archetype_node_id="at0030" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name>
+        <items archetype_node_id="at0103" xsi:type="ELEMENT">
+          <name>
+            <value>Order ID</value>
+          </name>
+          <value xsi:type="DV_IDENTIFIER">
+            <issuer>Hospital de Clinicas</issuer>
+            <assigner>Hospital de Clinicas</assigner>
+            <id>71949114</id>
+            <type>LOCALID</type>
+          </value>
+        </items><!-- SLOT NOT PROCESSED -->
+      </protocol>
+      <time xsi:type="DV_DATE_TIME">
+        <value>20170302T185601,947-0300</value>
+      </time>
+      <description archetype_node_id="at0017" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name>
+        <items archetype_node_id="at0020" xsi:type="ELEMENT">
+          <name>
+            <value>Medication</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>TzMRiKdXVrfqMvZEIYmQ</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0082" xsi:type="CLUSTER">
+          <name>
+            <value>Product</value>
+          </name><!-- SLOT NOT PROCESSED -->
+          <items archetype_node_id="at0130" xsi:type="ELEMENT">
+            <name>
+              <value>Manufacturer</value>
+            </name>
+            <value xsi:type="DV_TEXT">
+              <value>tNKcxMeAixkmgITGTmKD</value>
+            </value>
+          </items>
+          <items archetype_node_id="at0083" xsi:type="ELEMENT">
+            <name>
+              <value>Batch ID</value>
+            </name>
+            <value xsi:type="DV_TEXT">
+              <value>,.UBHJlPldWaXFl Iome</value>
+            </value>
+          </items>
+          <items archetype_node_id="at0084" xsi:type="ELEMENT">
+            <name>
+              <value>Expiry date</value>
+            </name>
+            <value xsi:type="DV_DATE">
+              <value>20170302</value>
+            </value>
+          </items>
+          <items archetype_node_id="openEHR-EHR-CLUSTER.medication_supply_amount.v0" xsi:type="CLUSTER">
+            <name>
+              <value>Medication supply amount</value>
+            </name>
+            <items archetype_node_id="at0161" xsi:type="ELEMENT">
+              <name>
+                <value>Amount description</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>QwIqbCeiBWZXaIMLzbri</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0131" xsi:type="ELEMENT">
+              <name>
+                <value>Amount</value>
+              </name>
+              <value xsi:type="DV_QUANTITY">
+                <magnitude>554</magnitude>
+                <units>1</units>
+              </value>
+            </items>
+            <items archetype_node_id="at0147" xsi:type="ELEMENT">
+              <name>
+                <value>Units</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>jc ZQmzfaZPilTlUEVnS</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0158" xsi:type="ELEMENT">
+              <name>
+                <value>Number of packs</value>
+              </name>
+              <value xsi:type="DV_COUNT">
+                <magnitude>45</magnitude>
+              </value>
+            </items>
+            <items archetype_node_id="at0159" xsi:type="ELEMENT">
+              <name>
+                <value>Pack size</value>
+              </name>
+              <value xsi:type="DV_QUANTITY">
+                <magnitude>554</magnitude>
+                <units>1</units>
+              </value>
+            </items>
+            <items archetype_node_id="at0160" xsi:type="ELEMENT">
+              <name>
+                <value>Pack units</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>UbYIpLngbLopdRtUJdgT</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0142" xsi:type="ELEMENT">
+              <name>
+                <value>Duration of supply</value>
+              </name>
+              <value xsi:type="DV_DURATION">
+                <value>PT30M</value>
+              </value>
+            </items>
+          </items>
+          <items archetype_node_id="at0105" xsi:type="ELEMENT">
+            <name>
+              <value>Max class dose administered</value>
+            </name>
+          </items>
+          <items archetype_node_id="at0132" xsi:type="ELEMENT">
+            <name>
+              <value>Dispensing substitution</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Substitute product dispensed</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0138</code_string>
+                </defining_code>
+              </value>
+          </items>
+          <items archetype_node_id="at0133" xsi:type="ELEMENT">
+            <name>
+              <value>Dispensing substitution reason</value>
+            </name>
+            <value xsi:type="DV_TEXT">
+              <value>CdCXTQiJsMyPRhrLjadE</value>
+            </value>
+          </items>
+        </items>
+        <items archetype_node_id="at0043" xsi:type="ELEMENT">
+          <name>
+            <value>Order scheduled datetime</value>
+          </name>
+          <value xsi:type="DV_DATE_TIME">
+            <value>20170524T211927,000-0300</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0021" xsi:type="ELEMENT">
+          <name>
+            <value>Reason</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>blxkpTIHXNpuWPTq BAK</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0117" xsi:type="ELEMENT">
+          <name>
+            <value>Reason course amended/stopped</value>
+          </name><value xsi:type="DV_CODED_TEXT">
+                <value>Inadequate clinical response</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0119</code_string>
+                </defining_code>
+              </value>
+        </items>
+        <items archetype_node_id="at0116" xsi:type="ELEMENT">
+          <name>
+            <value>Reason dose not administered</value>
+          </name><value xsi:type="DV_CODED_TEXT">
+                <value>Medicine unavailable</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0127</code_string>
+                </defining_code>
+              </value>
+        </items>
+        <items archetype_node_id="at0140" xsi:type="CLUSTER">
+          <name>
+            <value>Delivery details</value>
+          </name>
+          <items archetype_node_id="at0141" xsi:type="ELEMENT">
+            <name>
+              <value>Body site</value>
+            </name>
+            <value xsi:type="DV_TEXT">
+              <value>kcmVMDOoYscwBBfBnXWE</value>
+            </value>
+          </items>
+          <items archetype_node_id="openEHR-EHR-CLUSTER.anatomical_location.v1" xsi:type="CLUSTER">
+            <name>
+              <value>Anatomical location</value>
+            </name>
+            <items archetype_node_id="at0001" xsi:type="ELEMENT">
+              <name>
+                <value>Body site name</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>KHDyPayYOUruvnnvRZl,</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0065" xsi:type="ELEMENT">
+              <name>
+                <value>Specific site</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>l.wCMDfPBkk.WRDSSLBS</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0002" xsi:type="ELEMENT">
+              <name>
+                <value>Laterality</value>
+              </name><value xsi:type="DV_CODED_TEXT">
+                <value>Left</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0003</code_string>
+                </defining_code>
+              </value>
+            </items>
+            <items archetype_node_id="at0064" xsi:type="ELEMENT">
+              <name>
+                <value>Aspect</value>
+              </name><value xsi:type="DV_CODED_TEXT">
+                <value>Medial</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0067</code_string>
+                </defining_code>
+              </value>
+            </items>
+            <items archetype_node_id="at0055" xsi:type="ELEMENT">
+              <name>
+                <value>Anatomical Line</value>
+              </name><value xsi:type="DV_CODED_TEXT">
+                <value>Anterior axillary line</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0057</code_string>
+                </defining_code>
+              </value>
+            </items>
+            <items archetype_node_id="at0023" xsi:type="ELEMENT">
+              <name>
+                <value>Description</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>rIkeLYBUbGze.hNrkdYj</value>
+              </value>
+            </items><!-- SLOT NOT PROCESSED --><!-- SLOT NOT PROCESSED -->
+          </items>
+          <items archetype_node_id="at0143" xsi:type="ELEMENT">
+            <name>
+              <value>Delivery method</value>
+            </name>
+            <value xsi:type="DV_TEXT">
+              <value>FhMKgUmrOkJnujWiGrZU</value>
+            </value>
+          </items><!-- SLOT NOT PROCESSED -->
+        </items><!-- SLOT NOT PROCESSED -->
+        <items archetype_node_id="at0033" xsi:type="ELEMENT">
+          <name>
+            <value>Patient guidance</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>lXlMat,pJSErOh,fkerG</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0025" xsi:type="ELEMENT">
+          <name>
+            <value>Sequence number</value>
+          </name>
+          <value xsi:type="DV_COUNT">
+            <magnitude>45</magnitude>
+          </value>
+        </items>
+        <items archetype_node_id="at0024" xsi:type="ELEMENT">
+          <name>
+            <value>Comment</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>KCvHSyaB GtBrnDXX,ZI</value>
+          </value>
+        </items>
+      </description>
+      <ism_transition>
+        <current_state>
+          <value>planned</value>
+          <defining_code>
+            <terminology_id>
+              <value>openehr</value>
+            </terminology_id>
+            <code_string>526</code_string>
+          </defining_code>
+        </current_state>
+      </ism_transition>
+    </content><!-- SLOT NOT PROCESSED --><!-- SLOT NOT PROCESSED -->
+  </data>
+  <lifecycle_state>
+    <value>completed</value>
+    <defining_code>
+      <terminology_id>
+        <value>openehr</value>
+      </terminology_id>
+      <code_string>532</code_string>
+    </defining_code>
+  </lifecycle_state>
+</version></versions>

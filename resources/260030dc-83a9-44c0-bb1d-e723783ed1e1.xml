@@ -1,0 +1,1027 @@
+<versions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openehr.org/v1"><version   xsi:type="ORIGINAL_VERSION">
+  <contribution>
+    <id xsi:type="HIER_OBJECT_ID">
+      <value>047a8deb-a693-4eca-9cd8-6e5e3ef3ee6d</value>
+    </id>
+    <namespace>EHR::COMMON</namespace>
+    <type>CONTRIBUTION</type>
+  </contribution>
+  <commit_audit>
+    <system_id>CABOLABS_EHR</system_id>
+    <committer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>90839110-ed3e-4bb8-80d3-365cc3c756c0</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </committer>
+    <time_committed>
+      <value>20170524T211924,000-0300</value>
+    </time_committed>
+    <change_type>
+      <value>creation</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>249</code_string>
+      </defining_code>
+    </change_type>
+  </commit_audit>
+  <uid>
+    <value>e8491419-3ce0-4e01-abc3-424bd5448c65::EMR::1</value>
+  </uid>
+  <data xsi:type="COMPOSITION" archetype_node_id="openEHR-EHR-COMPOSITION.encounter.v1">
+    <name>
+      <value>Encuentro</value>
+    </name>
+    <uid xsi:type="HIER_OBJECT_ID">
+      <value>ebd2eda7-9ea6-43a9-99ba-51fb9f0a3524</value>
+    </uid>
+    <archetype_details>
+      <archetype_id>
+        <value>openEHR-EHR-COMPOSITION.encounter.v1</value>
+      </archetype_id>
+      <template_id>
+        <value>Simple Encounter ES</value>
+      </template_id>
+      <rm_version>1.0.2</rm_version>
+    </archetype_details>
+    <language>
+      <terminology_id>
+        <value>ISO_639-1</value>
+      </terminology_id>
+      <code_string>es</code_string>
+    </language>
+    <territory>
+      <terminology_id>
+        <value>ISO_3166-1</value>
+      </terminology_id>
+      <code_string>UY</code_string>
+    </territory>
+    <category>
+      <value>event</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>433</code_string>
+      </defining_code>
+    </category>
+    <composer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>05902a19-be85-4212-99ae-89a421703577</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </composer>
+    <context>
+      <start_time>
+        <value>20170524T211924,000-0300</value>
+      </start_time>
+      <setting>
+        <value>Hospital A</value>
+        <defining_code>
+          <terminology_id>
+            <value>openehr</value>
+          </terminology_id>
+          <code_string>229</code_string>
+        </defining_code>
+      </setting>
+    </context>
+    <content archetype_node_id="openEHR-EHR-EVALUATION.reason_for_encounter.v1" xsi:type="EVALUATION">
+      <name>
+        <value>Motivo de consulta</value>
+      </name>
+      <language>
+        <terminology_id>
+          <value>ISO_639-1</value>
+        </terminology_id>
+        <code_string>es</code_string>
+      </language>
+      <encoding>
+        <terminology_id>
+          <value>Unicode</value>
+        </terminology_id>
+        <code_string>UTF-8</code_string>
+      </encoding>
+      <subject xsi:type="PARTY_SELF" />
+      <data archetype_node_id="at0001" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name>
+        <items archetype_node_id="at0002" xsi:type="ELEMENT">
+          <name>
+            <value>Tipo de contacto</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>oEOsROCy.OdQMGrrriCr</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0004" xsi:type="ELEMENT">
+          <name>
+            <value>Problema presentado</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>KieUWIjfmWdXCpceSvok</value>
+          </value>
+        </items>
+      </data>
+    </content>
+    <content archetype_node_id="openEHR-EHR-SECTION.vital_signs.v0" xsi:type="SECTION">
+      <name>
+        <value>Signos vitales</value>
+      </name>
+      <items archetype_node_id="openEHR-EHR-OBSERVATION.blood_pressure.v1" xsi:type="OBSERVATION">
+        <name>
+          <value>Presión arterial</value>
+        </name>
+        <language>
+          <terminology_id>
+            <value>ISO_639-1</value>
+          </terminology_id>
+          <code_string>es</code_string>
+        </language>
+        <encoding>
+          <terminology_id>
+            <value>Unicode</value>
+          </terminology_id>
+          <code_string>UTF-8</code_string>
+        </encoding>
+        <subject xsi:type="PARTY_SELF" />
+        <protocol archetype_node_id="at0011" xsi:type="ITEM_TREE">
+          <name>
+            <value>*Tree(en)</value>
+          </name>
+          <items archetype_node_id="at0013" xsi:type="ELEMENT">
+            <name>
+              <value>Tamaño del manguito</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Adulto pequeño</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1008</code_string>
+                </defining_code>
+              </value>
+          </items>
+          <items archetype_node_id="at1033" xsi:type="CLUSTER">
+            <name>
+              <value>*Location(en)</value>
+            </name>
+            <items archetype_node_id="at0014" xsi:type="ELEMENT">
+              <name>
+                <value>*Location of measurement(en)</value>
+              </name><value xsi:type="DV_CODED_TEXT">
+                <value>Muñeca derecha</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1020</code_string>
+                </defining_code>
+              </value>
+            </items>
+            <items archetype_node_id="at1034" xsi:type="ELEMENT">
+              <name>
+                <value>*X - Specific location(en)</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>HOwpsHmBAiqLYvPnCqMZ</value>
+              </value>
+            </items>
+          </items><!-- SLOT NOT PROCESSED -->
+          <items archetype_node_id="at1035" xsi:type="ELEMENT">
+            <name>
+              <value>Método</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Dispositivo</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1039</code_string>
+                </defining_code>
+              </value>
+          </items>
+          <items archetype_node_id="at1010" xsi:type="ELEMENT">
+            <name>
+              <value>Punto final diastólica</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Fase IV</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1011</code_string>
+                </defining_code>
+              </value>
+          </items><!-- SLOT NOT PROCESSED --><!-- SLOT NOT PROCESSED -->
+        </protocol>
+        <data archetype_node_id="at0001" xsi:type="HISTORY">
+          <name>
+            <value>*history(en)</value>
+          </name>
+          <origin xsi:type="DV_DATE_TIME">
+            <value>20170302T185534,988-0300</value>
+          </origin>
+          <events archetype_node_id="at0006" xsi:type="POINT_EVENT">
+            <name>
+              <value>*Any event(en)</value>
+            </name>
+            <time xsi:type="DV_DATE_TIME">
+              <value>20170302T185534,988-0300</value>
+            </time>
+            <data archetype_node_id="at0003" xsi:type="ITEM_TREE">
+              <name>
+                <value>blood pressure</value>
+              </name>
+              <items archetype_node_id="at0004" xsi:type="ELEMENT">
+                <name>
+                  <value>Sistólica</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>482</magnitude>
+                  <units>mm[Hg]</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0005" xsi:type="ELEMENT">
+                <name>
+                  <value>Diastólica</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>482</magnitude>
+                  <units>mm[Hg]</units>
+                </value>
+              </items>
+              <items archetype_node_id="at1007" xsi:type="ELEMENT">
+                <name>
+                  <value>Presión del pulso</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>482</magnitude>
+                  <units>mm[Hg]</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0033" xsi:type="ELEMENT">
+                <name>
+                  <value>*Comment(en)</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>gKRJpVruVaVtxHyuiwXQ</value>
+                </value>
+              </items>
+            </data>
+            <state archetype_node_id="at0007" xsi:type="ITEM_TREE">
+              <name>
+                <value>state structure</value>
+              </name>
+              <items archetype_node_id="at0008" xsi:type="ELEMENT">
+                <name>
+                  <value>Posición</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Sentado</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1001</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at1052" xsi:type="ELEMENT">
+                <name>
+                  <value>Factores de confusión</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>Eodm .n,MNylGXmKevUV</value>
+                </value>
+              </items><!-- SLOT NOT PROCESSED -->
+              <items archetype_node_id="at1043" xsi:type="ELEMENT">
+                <name>
+                  <value>Estado de sueño</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>alerta y despierto</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1044</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at1005" xsi:type="ELEMENT">
+                <name>
+                  <value>*Tilt(en)</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>6</magnitude>
+                  <units>°</units>
+                </value>
+              </items>
+            </state>
+          </events>
+        </data>
+      </items>
+      <items archetype_node_id="openEHR-EHR-OBSERVATION.pulse.v1" xsi:type="OBSERVATION">
+        <name>
+          <value>Pulse/Heart beat</value>
+        </name>
+        <language>
+          <terminology_id>
+            <value>ISO_639-1</value>
+          </terminology_id>
+          <code_string>es</code_string>
+        </language>
+        <encoding>
+          <terminology_id>
+            <value>Unicode</value>
+          </terminology_id>
+          <code_string>UTF-8</code_string>
+        </encoding>
+        <subject xsi:type="PARTY_SELF" />
+        <protocol archetype_node_id="at0010" xsi:type="ITEM_TREE">
+          <name>
+            <value>List</value>
+          </name>
+          <items archetype_node_id="at1019" xsi:type="ELEMENT">
+            <name>
+              <value>Method</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Palpation</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1032</code_string>
+                </defining_code>
+              </value>
+          </items>
+          <items archetype_node_id="at1037" xsi:type="ELEMENT">
+            <name>
+              <value>Body site</value>
+            </name><value xsi:type="DV_CODED_TEXT">
+                <value>Radial Artery - Left</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1038</code_string>
+                </defining_code>
+              </value>
+          </items><!-- SLOT NOT PROCESSED --><!-- SLOT NOT PROCESSED -->
+        </protocol>
+        <data archetype_node_id="at0002" xsi:type="HISTORY">
+          <name>
+            <value>history</value>
+          </name>
+          <origin xsi:type="DV_DATE_TIME">
+            <value>20170302T185535,038-0300</value>
+          </origin>
+          <events archetype_node_id="at0003" xsi:type="POINT_EVENT">
+            <name>
+              <value>Any event</value>
+            </name>
+            <time xsi:type="DV_DATE_TIME">
+              <value>20170302T185535,038-0300</value>
+            </time>
+            <data archetype_node_id="at0001" xsi:type="ITEM_TREE">
+              <name>
+                <value>structure</value>
+              </name>
+              <items archetype_node_id="at1005" xsi:type="ELEMENT">
+                <name xsi:type="DV_CODED_TEXT">
+                  <value>Pulse presence</value>
+                  <defining_code>
+                    <terminology_id>
+                      <value>local</value>
+                    </terminology_id>
+                    <code_string>at1045</code_string>
+                  </defining_code>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Present</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1024</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at0004" xsi:type="ELEMENT">
+                <name xsi:type="DV_CODED_TEXT">
+                  <value>Pulse Rate</value>
+                  <defining_code>
+                    <terminology_id>
+                      <value>local</value>
+                    </terminology_id>
+                    <code_string>at1026</code_string>
+                  </defining_code>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>482</magnitude>
+                  <units>/min</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0005" xsi:type="ELEMENT">
+                <name>
+                  <value>Regular?</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Irregular</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1028</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at1055" xsi:type="ELEMENT">
+                <name>
+                  <value>Irregular type</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Regularly Irregular</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0007</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at1030" xsi:type="ELEMENT">
+                <name>
+                  <value>Character</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>oVLNkEymnJDfdKPmDeaA</value>
+                </value>
+              </items>
+              <items archetype_node_id="at1022" xsi:type="ELEMENT">
+                <name>
+                  <value>Clinical description</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>Bo,etoXluHpseeniZfmf</value>
+                </value>
+              </items>
+              <items archetype_node_id="at1023" xsi:type="ELEMENT">
+                <name xsi:type="DV_CODED_TEXT">
+                  <value>Clinical interpretation</value>
+                  <defining_code>
+                    <terminology_id>
+                      <value>local</value>
+                    </terminology_id>
+                    <code_string>at1057</code_string>
+                  </defining_code>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>KJWADelkjZiMDzlpoZcd</value>
+                </value>
+              </items>
+              <items archetype_node_id="at1059" xsi:type="ELEMENT">
+                <name>
+                  <value>Comment</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>M lqmbJDHDYPHqeDtRJm</value>
+                </value>
+              </items>
+            </data>
+            <state archetype_node_id="at0012" xsi:type="ITEM_TREE">
+              <name>
+                <value>List</value>
+              </name>
+              <items archetype_node_id="at0013" xsi:type="ELEMENT">
+                <name>
+                  <value>Position</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Standing/upright</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at1003</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at1018" xsi:type="ELEMENT">
+                <name>
+                  <value>Confounding factors</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>gBMcuOxwruurkq AGP,n</value>
+                </value>
+              </items><!-- SLOT NOT PROCESSED -->
+            </state>
+          </events>
+        </data>
+      </items>
+      <items archetype_node_id="openEHR-EHR-OBSERVATION.respiration.v1" xsi:type="OBSERVATION">
+        <name>
+          <value>Respirations</value>
+        </name>
+        <language>
+          <terminology_id>
+            <value>ISO_639-1</value>
+          </terminology_id>
+          <code_string>es</code_string>
+        </language>
+        <encoding>
+          <terminology_id>
+            <value>Unicode</value>
+          </terminology_id>
+          <code_string>UTF-8</code_string>
+        </encoding>
+        <subject xsi:type="PARTY_SELF" />
+        <data archetype_node_id="at0001" xsi:type="HISTORY">
+          <name>
+            <value>history</value>
+          </name>
+          <origin xsi:type="DV_DATE_TIME">
+            <value>20170302T185535,098-0300</value>
+          </origin>
+          <events archetype_node_id="at0002" xsi:type="POINT_EVENT">
+            <name>
+              <value>Any event</value>
+            </name>
+            <time xsi:type="DV_DATE_TIME">
+              <value>20170302T185535,098-0300</value>
+            </time>
+            <data archetype_node_id="at0003" xsi:type="ITEM_TREE">
+              <name>
+                <value>List</value>
+              </name>
+              <items archetype_node_id="at0004" xsi:type="ELEMENT">
+                <name>
+                  <value>Rate</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>131</magnitude>
+                  <units>/min</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0005" xsi:type="ELEMENT">
+                <name>
+                  <value>Rhythm</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Regular</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0006</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at0016" xsi:type="ELEMENT">
+                <name>
+                  <value>Depth</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Normal</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0017</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at0024" xsi:type="ELEMENT">
+                <name>
+                  <value>Description</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>bxggYRZCtqGkmmFbopUG</value>
+                </value>
+              </items>
+              <items archetype_node_id="at0009" xsi:type="ELEMENT">
+                <name>
+                  <value>Abnormal respiratory pattern</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Kussmaul's respiration</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0012</code_string>
+                </defining_code>
+              </value>
+              </items>
+            </data>
+            <state archetype_node_id="at0022" xsi:type="ITEM_TREE">
+              <name>
+                <value>List</value>
+              </name><!-- SLOT NOT PROCESSED -->
+              <items archetype_node_id="at0056" xsi:type="ELEMENT">
+                <name>
+                  <value>Confounding factors</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>jNTPZLTKmxfgGxhldHPX</value>
+                </value>
+              </items><!-- SLOT NOT PROCESSED -->
+            </state>
+          </events>
+        </data>
+      </items>
+      <items archetype_node_id="openEHR-EHR-OBSERVATION.height.v1" xsi:type="OBSERVATION">
+        <name>
+          <value>Height/Length</value>
+        </name>
+        <language>
+          <terminology_id>
+            <value>ISO_639-1</value>
+          </terminology_id>
+          <code_string>es</code_string>
+        </language>
+        <encoding>
+          <terminology_id>
+            <value>Unicode</value>
+          </terminology_id>
+          <code_string>UTF-8</code_string>
+        </encoding>
+        <subject xsi:type="PARTY_SELF" />
+        <protocol archetype_node_id="at0007" xsi:type="ITEM_TREE">
+          <name>
+            <value>List</value>
+          </name><!-- SLOT NOT PROCESSED -->
+        </protocol>
+        <data archetype_node_id="at0001" xsi:type="HISTORY">
+          <name>
+            <value>history</value>
+          </name>
+          <origin xsi:type="DV_DATE_TIME">
+            <value>20170302T185535,148-0300</value>
+          </origin>
+          <events archetype_node_id="at0002" xsi:type="POINT_EVENT">
+            <name>
+              <value>Any event</value>
+            </name>
+            <time xsi:type="DV_DATE_TIME">
+              <value>20170302T185535,148-0300</value>
+            </time>
+            <data archetype_node_id="at0003" xsi:type="ITEM_TREE">
+              <name>
+                <value>Simple</value>
+              </name>
+              <items archetype_node_id="at0004" xsi:type="ELEMENT">
+                <name>
+                  <value>Height/Length</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>759</magnitude>
+                  <units>cm</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0018" xsi:type="ELEMENT">
+                <name>
+                  <value>Comment</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>qZXnUXzllg ocJTv.pDa</value>
+                </value>
+              </items>
+            </data>
+            <state archetype_node_id="at0013" xsi:type="ITEM_TREE">
+              <name>
+                <value>Tree</value>
+              </name>
+              <items archetype_node_id="at0014" xsi:type="ELEMENT">
+                <name>
+                  <value>Position</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Standing</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0016</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at0019" xsi:type="ELEMENT">
+                <name>
+                  <value>Confounding factors</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>bclvEfSq .mGoGwOgHVG</value>
+                </value>
+              </items>
+            </state>
+          </events>
+        </data>
+      </items>
+      <items archetype_node_id="openEHR-EHR-OBSERVATION.body_weight.v1" xsi:type="OBSERVATION">
+        <name>
+          <value>Peso corporal</value>
+        </name>
+        <language>
+          <terminology_id>
+            <value>ISO_639-1</value>
+          </terminology_id>
+          <code_string>es</code_string>
+        </language>
+        <encoding>
+          <terminology_id>
+            <value>Unicode</value>
+          </terminology_id>
+          <code_string>UTF-8</code_string>
+        </encoding>
+        <subject xsi:type="PARTY_SELF" />
+        <protocol archetype_node_id="at0015" xsi:type="ITEM_TREE">
+          <name>
+            <value>*protocol structure(en)</value>
+          </name><!-- SLOT NOT PROCESSED -->
+        </protocol>
+        <data archetype_node_id="at0002" xsi:type="HISTORY">
+          <name>
+            <value>*history(en)</value>
+          </name>
+          <origin xsi:type="DV_DATE_TIME">
+            <value>20170302T185535,168-0300</value>
+          </origin>
+          <events archetype_node_id="at0003" xsi:type="POINT_EVENT">
+            <name>
+              <value>Cualquier evento.</value>
+            </name>
+            <time xsi:type="DV_DATE_TIME">
+              <value>20170302T185535,168-0300</value>
+            </time>
+            <data archetype_node_id="at0001" xsi:type="ITEM_TREE">
+              <name>
+                <value>*Simple(en)</value>
+              </name>
+              <items archetype_node_id="at0004" xsi:type="ELEMENT">
+                <name>
+                  <value>Peso</value>
+                </name>
+                <value xsi:type="DV_QUANTITY">
+                  <magnitude>759</magnitude>
+                  <units>kg</units>
+                </value>
+              </items>
+              <items archetype_node_id="at0024" xsi:type="ELEMENT">
+                <name>
+                  <value>Observaciones</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>kIQv,VXlCUJoMk.jalq.</value>
+                </value>
+              </items>
+            </data>
+            <state archetype_node_id="at0008" xsi:type="ITEM_TREE">
+              <name>
+                <value>*state structure(en)</value>
+              </name>
+              <items archetype_node_id="at0009" xsi:type="ELEMENT">
+                <name>
+                  <value>Indumentaria</value>
+                </name><value xsi:type="DV_CODED_TEXT">
+                <value>Indumentaria ligera/Ropa interior</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0011</code_string>
+                </defining_code>
+              </value>
+              </items>
+              <items archetype_node_id="at0025" xsi:type="ELEMENT">
+                <name>
+                  <value>Factores de alteración</value>
+                </name>
+                <value xsi:type="DV_TEXT">
+                  <value>UcGCSTtTjwWvHxXJeQtA</value>
+                </value>
+              </items>
+            </state>
+          </events>
+        </data>
+      </items><!-- SLOT NOT PROCESSED -->
+    </content>
+    <content archetype_node_id="openEHR-EHR-OBSERVATION.exam.v1" xsi:type="OBSERVATION">
+      <name>
+        <value>Hallazgos de la examinación física</value>
+      </name>
+      <language>
+        <terminology_id>
+          <value>ISO_639-1</value>
+        </terminology_id>
+        <code_string>es</code_string>
+      </language>
+      <encoding>
+        <terminology_id>
+          <value>Unicode</value>
+        </terminology_id>
+        <code_string>UTF-8</code_string>
+      </encoding>
+      <subject xsi:type="PARTY_SELF" />
+      <protocol archetype_node_id="at0007" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name><!-- SLOT NOT PROCESSED --><!-- SLOT NOT PROCESSED -->
+      </protocol>
+      <data archetype_node_id="at0001" xsi:type="HISTORY">
+        <name>
+          <value>Event Series</value>
+        </name>
+        <origin xsi:type="DV_DATE_TIME">
+          <value>20170302T185535,198-0300</value>
+        </origin>
+        <events archetype_node_id="at0002" xsi:type="POINT_EVENT">
+          <name>
+            <value>*Any event(en)</value>
+          </name>
+          <time xsi:type="DV_DATE_TIME">
+            <value>20170302T185535,198-0300</value>
+          </time>
+          <data archetype_node_id="at0003" xsi:type="ITEM_TREE">
+            <name>
+              <value>Tree</value>
+            </name>
+            <items archetype_node_id="at0004" xsi:type="ELEMENT">
+              <name>
+                <value>Descripción</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>lGqBzVKVUugAoOI WzbP</value>
+              </value>
+            </items><!-- SLOT NOT PROCESSED -->
+            <items archetype_node_id="at0006" xsi:type="ELEMENT">
+              <name>
+                <value>Interpretación</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>gvDxZMxiSsOCoesJRinJ</value>
+              </value>
+            </items>
+            <items archetype_node_id="at0011" xsi:type="ELEMENT">
+              <name>
+                <value>Comentario</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>nBPrnBTAfocPTPLqKXjY</value>
+              </value>
+            </items>
+          </data>
+          <state archetype_node_id="at0009" xsi:type="ITEM_TREE">
+            <name>
+              <value>Tree</value>
+            </name>
+            <items archetype_node_id="at0008" xsi:type="ELEMENT">
+              <name>
+                <value>Factores de confusión</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>oYUTefwMwG.igkEpzERU</value>
+              </value>
+            </items>
+          </state>
+        </events>
+      </data>
+    </content>
+    <content archetype_node_id="openEHR-EHR-EVALUATION.problem_diagnosis.v1" xsi:type="EVALUATION">
+      <name>
+        <value>*Problem/Diagnosis(en)</value>
+      </name>
+      <language>
+        <terminology_id>
+          <value>ISO_639-1</value>
+        </terminology_id>
+        <code_string>es</code_string>
+      </language>
+      <encoding>
+        <terminology_id>
+          <value>Unicode</value>
+        </terminology_id>
+        <code_string>UTF-8</code_string>
+      </encoding>
+      <subject xsi:type="PARTY_SELF" />
+      <protocol archetype_node_id="at0032" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name>
+        <items archetype_node_id="at0070" xsi:type="ELEMENT">
+          <name>
+            <value>Última actualización</value>
+          </name>
+          <value xsi:type="DV_DATE_TIME">
+            <value>20170524T211924,000-0300</value>
+          </value>
+        </items><!-- SLOT NOT PROCESSED -->
+      </protocol>
+      <data archetype_node_id="at0001" xsi:type="ITEM_TREE">
+        <name>
+          <value>structure</value>
+        </name>
+        <items archetype_node_id="at0002" xsi:type="ELEMENT">
+          <name>
+            <value>*Problem/Diagnosis name(en)</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>t.AvUkHWSoXQ.SYNCiEU</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0009" xsi:type="ELEMENT">
+          <name>
+            <value>Descripción clínica</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>W PfiBwwGBhjhQMBZzr </value>
+          </value>
+        </items>
+        <items archetype_node_id="at0012" xsi:type="ELEMENT">
+          <name>
+            <value>*Body site(en)</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>ueSai.jswftLCcxyxEcJ</value>
+          </value>
+        </items><!-- SLOT NOT PROCESSED -->
+        <items archetype_node_id="at0077" xsi:type="ELEMENT">
+          <name>
+            <value>*Date of onset(en)</value>
+          </name>
+          <value xsi:type="DV_DATE_TIME">
+            <value>20170524T211924,000-0300</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0003" xsi:type="ELEMENT">
+          <name>
+            <value>Momento de reconocimiento del problema</value>
+          </name>
+          <value xsi:type="DV_DATE_TIME">
+            <value>20170524T211924,000-0300</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0005" xsi:type="ELEMENT">
+          <name>
+            <value>Severidad</value>
+          </name><value xsi:type="DV_CODED_TEXT">
+                <value>Moderada</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0048</code_string>
+                </defining_code>
+              </value>
+        </items><!-- SLOT NOT PROCESSED -->
+        <items archetype_node_id="at0072" xsi:type="ELEMENT">
+          <name>
+            <value>Progreso</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>RNMdxWvGPImLXwEcgZYL</value>
+          </value>
+        </items>
+        <items archetype_node_id="at0030" xsi:type="ELEMENT">
+          <name>
+            <value>Momento de resolución</value>
+          </name>
+          <value xsi:type="DV_DATE">
+            <value>20170302</value>
+          </value>
+        </items><!-- SLOT NOT PROCESSED -->
+        <items archetype_node_id="at0073" xsi:type="ELEMENT">
+          <name>
+            <value>*Diagnostic certainty(en)</value>
+          </name><value xsi:type="DV_CODED_TEXT">
+                <value>*Suspected(en)</value>
+                <defining_code>
+                  <terminology_id>
+                    <value>local</value>
+                  </terminology_id>
+                  <code_string>at0074</code_string>
+                </defining_code>
+              </value>
+        </items>
+        <items archetype_node_id="at0069" xsi:type="ELEMENT">
+          <name>
+            <value>Comentario</value>
+          </name>
+          <value xsi:type="DV_TEXT">
+            <value>wGABSvMKcNwoGgSSjkuK</value>
+          </value>
+        </items>
+      </data>
+    </content>
+  </data>
+  <lifecycle_state>
+    <value>completed</value>
+    <defining_code>
+      <terminology_id>
+        <value>openehr</value>
+      </terminology_id>
+      <code_string>532</code_string>
+    </defining_code>
+  </lifecycle_state>
+</version></versions>

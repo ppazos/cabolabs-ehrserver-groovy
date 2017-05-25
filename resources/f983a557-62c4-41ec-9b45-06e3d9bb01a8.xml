@@ -1,0 +1,218 @@
+<versions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openehr.org/v1"><version   xsi:type="ORIGINAL_VERSION">
+  <contribution>
+    <id xsi:type="HIER_OBJECT_ID">
+      <value>a323a842-21b2-4696-9ffe-78747dae48bf</value>
+    </id>
+    <namespace>EHR::COMMON</namespace>
+    <type>CONTRIBUTION</type>
+  </contribution>
+  <commit_audit>
+    <system_id>CABOLABS_EHR</system_id>
+    <committer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>cc193f71-f5fe-438a-87f9-81ecb302eede</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </committer>
+    <time_committed>
+      <value>20170524T211920,000-0300</value>
+    </time_committed>
+    <change_type>
+      <value>creation</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>249</code_string>
+      </defining_code>
+    </change_type>
+  </commit_audit>
+  <uid>
+    <value>feeb457a-5896-480a-a6d7-9ecce4cef99a::EMR::1</value>
+  </uid>
+  <data  archetype_node_id="openEHR-EHR-COMPOSITION.referral.v1" xsi:type="COMPOSITION">
+    <name>
+      <value>Referral</value>
+    </name>
+    <uid xsi:type="HIER_OBJECT_ID">
+      <value>ca78be7f-dcce-4e73-b27d-b352b0e05e7b</value>
+    </uid>
+    <archetype_details>
+      <archetype_id>
+        <value>openEHR-EHR-COMPOSITION.referral.v1</value>
+      </archetype_id>
+      <template_id>
+        <value>Referral</value>
+      </template_id>
+      <rm_version>1.0.2</rm_version>
+    </archetype_details>
+    <language>
+      <terminology_id>
+        <value>ISO_639-1</value>
+      </terminology_id>
+      <code_string>en</code_string>
+    </language>
+    <territory>
+      <terminology_id>
+        <value>ISO_3166-1</value>
+      </terminology_id>
+      <code_string>UY</code_string>
+    </territory>
+    <category>
+      <value>event</value>
+      <defining_code>
+        <terminology_id>
+          <value>openehr</value>
+        </terminology_id>
+        <code_string>433</code_string>
+      </defining_code>
+    </category>
+    <composer xsi:type="PARTY_IDENTIFIED">
+      <external_ref>
+        <id xsi:type="HIER_OBJECT_ID">
+          <value>cc193f71-f5fe-438a-87f9-81ecb302eede</value>
+        </id>
+        <namespace>DEMOGRAPHIC</namespace>
+        <type>PERSON</type>
+      </external_ref>
+      <name>Dr. House</name>
+    </composer>
+    <context>
+      <start_time>
+        <value>20150506T215226,778-0300</value>
+      </start_time>
+      <setting>
+        <value>Hospital Montevideo</value>
+        <defining_code>
+          <terminology_id>
+            <value>openehr</value>
+          </terminology_id>
+          <code_string>229</code_string>
+        </defining_code>
+      </setting>
+      <other_context xsi:type="ITEM_TREE" archetype_node_id="at0001">
+        <name>
+          <value>@ internal @</value>
+        </name>
+        <!-- OPT specifies a slot but is not used -->
+      </other_context>
+    </context>
+    <content archetype_node_id="openEHR-EHR-INSTRUCTION.request-referral.v1" xsi:type="INSTRUCTION">
+      <name>
+        <value>Referral request</value>
+      </name>
+      <language>
+        <terminology_id>
+          <value>ISO_639-1</value>
+        </terminology_id>
+        <code_string>en</code_string>
+      </language>
+      <encoding>
+        <terminology_id>
+          <value>Unicode</value>
+        </terminology_id>
+        <code_string>UTF-8</code_string>
+      </encoding>
+      <subject xsi:type="PARTY_SELF" />
+      <protocol archetype_node_id="at0008" xsi:type="ITEM_TREE">
+        <name>
+          <value>Tree</value>
+        </name>
+        <items archetype_node_id="at0.2" xsi:type="CLUSTER">
+              <name>
+                <value>Duration</value>
+              </name>
+              <items archetype_node_id="at0.3" xsi:type="ELEMENT">
+                 <name>
+                   <value>Duration</value>
+                 </name>
+                 <value xsi:type="DV_DURATION">
+                   <!--<value>PT30M</value>-->
+                   <value>PT30M</value>
+                 </value>
+             </items>
+             <items archetype_node_id="at0.4" xsi:type="ELEMENT">
+                 <name>
+                   <value>Indefinite</value>
+                 </name>
+                 <value xsi:type="DV_BOOLEAN">
+                   <value>true</value>
+                 </value>
+             </items>
+        </items>
+      </protocol>
+      <narrative xsi:type="DV_TEXT">
+        <value>iYqdnxADIvUhloRrfduBbyHZfbWPCl</value>
+      </narrative>
+      <activities archetype_node_id="at0001">
+        <name>
+          <value>Request</value>
+        </name>
+        <description archetype_node_id="at0009" xsi:type="ITEM_TREE">
+          <name>
+            <value>Tree</value>
+          </name>
+          <items archetype_node_id="at0121" xsi:type="ELEMENT">
+              <name>
+                <value>Service requested</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>M XQukS qXytolawuWoSKpYeJSOfOc</value>
+              </value>
+          </items>
+          <items archetype_node_id="at0135" xsi:type="ELEMENT">
+              <name>
+                <value>Description of service</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>zABOVPwCUQKmUdDA IAfgfEKXPpLhj</value>
+              </value>
+          </items>
+          <items archetype_node_id="at0062" xsi:type="ELEMENT">
+              <name>
+                <value>Reason for request</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>jKQiEeyPXu ebAjQJhEMlgOWY bW b</value>
+              </value>
+          </items>
+          <items archetype_node_id="at0064" xsi:type="ELEMENT">
+              <name>
+                <value>Reason description</value>
+              </name>
+              <value xsi:type="DV_TEXT">
+                <value>vYlKyHgyTwmaLAQalPiSvawVWR Smy</value>
+              </value>
+          </items>
+          <items archetype_node_id="at0040" xsi:type="ELEMENT">
+              <name>
+                <value>Date and/or time service required</value>
+              </name>
+              <value xsi:type="DV_DATE_TIME">
+                <value>20170524T211920,000-0300</value>
+              </value>
+          </items>
+        </description>
+        <timing>
+          <value>P1D</value>
+          <formalism>ISO8601</formalism>
+        </timing>
+        <action_archetype_id>a_valid_archetype_id</action_archetype_id>
+      </activities>
+    </content>
+  </data>
+  <lifecycle_state>
+    <value>completed</value>
+    <defining_code>
+      <terminology_id>
+        <value>openehr</value>
+      </terminology_id>
+      <code_string>532</code_string>
+    </defining_code>
+  </lifecycle_state>
+</version>
+</versions>
