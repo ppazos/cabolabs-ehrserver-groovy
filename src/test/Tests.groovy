@@ -15,7 +15,10 @@ class Tests extends GroovyTestCase {
       println "setUp"
       
       // port 80 for http, port 443 for https
-      client = new EhrServerClient('https://', 'ehrserver-cabolabs2.rhcloud.com', 443, '/')
+      //client = new EhrServerClient('https://', 'ehrserver-cabolabs2.rhcloud.com', 443, '/')
+      
+      //local
+      client = new EhrServerClient('http://', 'localhost', 8090, '/ehr')
    }
    protected void tearDown()
    {
@@ -92,7 +95,14 @@ class Tests extends GroovyTestCase {
       
       def PS = File.separator
       def xml = new File('.'+ PS +'resources'+ PS +'2ebfee9d-4f1b-4529-8947-6a62bed502db.xml').text
-      res = client.commit(uid, xml, 'orgman', 'TestEMR')
+      res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
+      /*
+      <result>
+        <type>AA</type>
+        <message>Se han recibido correctamente todas las versiones para el EHR 11111111-1111-1111-1111-111111111111</message>
+      </result>
+      */
+      
       
       println "res commit "+ res
       /*
@@ -100,6 +110,12 @@ class Tests extends GroovyTestCase {
 omposition 06f971f4-39a4-471e-90e4-6b93318e2e90 is not loaded. Please load the OPT to allow data indexing.
 
 */
+
+      def csresult = client.getContributions(uid)
+      assert csresult.contributions.size() == 1
+      
+      def coresult = client.getCompositions(uid)
+      assert coresult.result.size() == 1
    }
    
 /*

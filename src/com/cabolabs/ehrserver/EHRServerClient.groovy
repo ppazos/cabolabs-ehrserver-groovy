@@ -196,7 +196,6 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    } // getEhr
    
    
-   
    def Object getEhrIdByPatientId(String patientUid)
    {
       def res
@@ -289,10 +288,10 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
       try
       {
-         server.post( path: 'api/v1/commit',
+         server.post( path: 'api/v1/ehrs/'+ehrUid+'/compositions',
                      requestContentType: XML,
                      query: [
-                        ehrUid: ehrUid,
+                        //ehrUid: ehrUid,
                         auditCommitter: committer,
                         auditSystemId: systemId
                      ],
@@ -324,7 +323,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       return res
    }
    
-   def getContributions(String ehrUid, int max = 20)
+   def getContributions(String ehrUid, int max = 20, int offset = 0)
    {
       def res
       
@@ -337,14 +336,15 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'api/v1/contributions',
-                        query: [ehrUid: ehrUid, format:'json', max: max],
+         ehr.get( path: 'api/v1/ehrs/'+ehrUid+'/contributions',
+                        query: [format:'json', max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
          
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
             res = json
-            //println "JSON "+ ehrs +" "+ ehrs.getClass()
+            //println json
+            //println json.contributions.uid
          }
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
@@ -366,7 +366,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    /**
     * Retrieves clinical document indexes from an EHR, to get the content, use a composition uid on getComposition()
     */
-   def getCompositions(String ehrUid, int max = 20)
+   def getCompositions(String ehrUid, int max = 20, int offset = 0)
    {
       def res
       
@@ -380,7 +380,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
          ehr.get( path: 'api/v1/compositions',
-                        query: [ehrUid: ehrUid, format:'json', max: max],
+                        query: [ehrUid: ehrUid, format:'json', max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
          
@@ -406,14 +406,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    } // getConmpositions
 
 
-   def getQueries(String format = 'json', int max = 20)
+   def getQueries(String format = 'json', int max = 20, int offset = 0)
    {
       def res
       def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
          api.get( path: 'api/v1/queries',
-                        query: [format: format],
+                        query: [format: format, max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
          
