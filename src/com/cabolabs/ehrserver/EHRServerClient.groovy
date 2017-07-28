@@ -291,9 +291,9 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          server.post( path: 'api/v1/ehrs/'+ehrUid+'/compositions',
                      requestContentType: XML,
                      query: [
-                        //ehrUid: ehrUid,
                         auditCommitter: committer,
-                        auditSystemId: systemId
+                        auditSystemId: systemId,
+                        format: 'xml'
                      ],
                      body: xml,
                      headers: ['Authorization': 'Bearer '+ config.token] )
@@ -304,6 +304,15 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             //println res.data // null
             //println res.data.type // null
             println res.code +' '+res.message
+            
+            if (resp.status in 200..299)
+            {
+               println "Status OK: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
+            }
+            else
+            {
+               println "Status ERROR: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
+            }
          }
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad

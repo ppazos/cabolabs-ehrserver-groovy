@@ -80,6 +80,7 @@ class Tests extends GroovyTestCase {
    }
    */
    
+/*
    void test_commit()
    {
       println "test_commit"
@@ -96,26 +97,60 @@ class Tests extends GroovyTestCase {
       def PS = File.separator
       def xml = new File('.'+ PS +'resources'+ PS +'2ebfee9d-4f1b-4529-8947-6a62bed502db.xml').text
       res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
-      /*
-      <result>
-        <type>AA</type>
-        <message>Se han recibido correctamente todas las versiones para el EHR 11111111-1111-1111-1111-111111111111</message>
-      </result>
-      */
+      
+      //<result>
+      //  <type>AA</type>
+      //  <message>Se han recibido correctamente todas las versiones para el EHR 11111111-1111-1111-1111-111111111111</message>
+      //</result>
       
       
       println "res commit "+ res
-      /*
-      res commit ARVersions were committed successfully, but warnings are returned.EHR_SERVER::API::ERRORS::1324The OPT LabResults1 referenced by the c
-omposition 06f971f4-39a4-471e-90e4-6b93318e2e90 is not loaded. Please load the OPT to allow data indexing.
+      
+      //res commit ARVersions were committed successfully, but warnings are returned.EHR_SERVER::API::ERRORS::1324The OPT LabResults1 referenced by the
+      //composition 06f971f4-39a4-471e-90e4-6b93318e2e90 is not loaded. Please load the OPT to allow data indexing.
 
-*/
 
       def csresult = client.getContributions(uid)
       assert csresult.contributions.size() == 1
       
       def coresult = client.getCompositions(uid)
       assert coresult.result.size() == 1
+   }
+*/
+   
+   def commit_add_envelope(String xml_version)
+   {
+      xml_version = xml_version.replace('<?xml version="1.0" encoding="UTF-8"?>', '')
+      xml_version = xml_version.replace('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"', '')
+      xml_version = xml_version.replace('xmlns="http://schemas.openehr.org/v1"', '')
+         
+      // add namespace only on the root
+      xml_version = '<versions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openehr.org/v1">'+ xml_version +'</versions>'
+      
+      return xml_version
+   }
+   
+   void test_commit_production()
+   {
+      client.login('orgman', 'orgman', '123456')
+      
+      def res = client.getEhrs()
+      assert res.ehrs.size() > 0
+      String uid = res.ehrs[0].uid
+      
+      def PS = File.separator
+      
+      def xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'Vital_Signs_Summary.EN.v1_20170728024935_1.xml').text
+      xml = commit_add_envelope(xml)
+      res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
+      
+      xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'Psychotherapy_Note.EN.v1_20170724075238_1.xml').text
+      xml = commit_add_envelope(xml)
+      res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
+      
+      xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'simple_encounter_en.v1_20170728025738_1.xml').text
+      xml = commit_add_envelope(xml)
+      res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
    }
    
 /*
