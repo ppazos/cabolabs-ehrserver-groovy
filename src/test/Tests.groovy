@@ -16,21 +16,54 @@ class Tests extends GroovyTestCase {
       
       // port 80 for http, port 443 for https
       //client = new EhrServerClient('https://', 'ehrserver-cabolabs2.rhcloud.com', 443, '/')
+      client = new EhrServerClient('http://', 'cabolabs-ehrserver.rhcloud.com', 80, '/')
       
       //local
-      client = new EhrServerClient('http://', 'localhost', 8090, '/ehr')
+      //client = new EhrServerClient('http://', 'localhost', 8090, '/ehr')
    }
    protected void tearDown()
    {
       println "tearDown\n"
    }
    
-
-   void test_login()
+   void test_login_ok()
    {
-      println "test_login"
-      def token = client.login('orgman', 'orgman', '123456') // stores token internally
+      println "test_login_ok"
+      def res = client.login('orgman', 'orgman', '123456') // stores token internally
+      def token
+      
+      println res
+      
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else
+      {
+         token = res
+      }
+      
       assert token != null
+      //println "login this token " + client.config.token
+   }
+   void test_login_error()
+   {
+      println "test_login_error"
+      def res = client.login('orgman1', 'orgman', '123456') // stores token internally
+      
+      println res
+      
+      def token
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else
+      {
+         token = res.token
+      }
+      
+      assert token == null
       //println "login this token " + client.config.token
    }
    
@@ -132,9 +165,11 @@ class Tests extends GroovyTestCase {
    
    void test_commit_production()
    {
-      client.login('orgman', 'orgman', '123456')
+      def res = client.login('orgman', 'orgman', '123456')
       
-      def res = client.getEhrs()
+      assert !(res.status in 400..499)
+      
+      res = client.getEhrs()
       assert res.ehrs.size() > 0
       String uid = res.ehrs[0].uid
       

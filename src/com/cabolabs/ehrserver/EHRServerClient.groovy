@@ -81,10 +81,11 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       // service login
       // set token on session
       //def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      def res
       try
       {
          // Sin URLENC da error null pointer exception sin mas datos... no se porque es. PREGUNTAR!
-         def res = server.post(
+         res = server.post(
             path:'api/v1/login',
             requestContentType: ContentType.URLENC,
             body: [username: username, password: password, organization: orgnumber]
@@ -92,14 +93,49 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          
          config.token = res.responseData.token
          
+         println res.responseData
          //println "token: "+ config.token
          
-         // token
-         return res.responseData.token
+         return [
+            status: res.status,
+            token: res.responseData.token,
+            message: 'ehrserver.login.success'
+         ] //res.responseData.token
       }
       catch (Exception e)
       {
-         e.printStackTrace(System.out)
+         /*
+         println e.response
+         println e.response.status
+         println e.response.responseData
+         */
+         //println e.getClass() // groovyx.net.http.HttpResponseException
+         //println e.message
+         //e.printStackTrace(System.out)
+         if (e.message == "Unauthorized")
+         {
+            assert e.response.responseData.type == "AR"
+            /*
+            {
+                "result": {
+                    "type": "AR",
+                    "message": "No matching account",
+                    "code": "EHRSERVER::API::RESPONSE_CODES::e01.0001"
+                }
+            }
+            */
+            return [
+               status: e.response.status,
+               message: 'ehrserver.login.fail'
+            ]
+         }
+         else
+         {
+            return [
+               status: e.response.status,
+               message: e.message
+            ]
+         }
       }
    }
    
@@ -337,7 +373,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       def res
       
       // Pide datos al EHR Server
-      def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
 
       // Lookup de ehrId por subjectId
       // FIXME: esto se puede evitar si viene el dato con el paciente
@@ -345,7 +381,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'api/v1/ehrs/'+ehrUid+'/contributions',
+         server.get( path: 'api/v1/ehrs/'+ehrUid+'/contributions',
                         query: [format:'json', max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
@@ -380,7 +416,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       def res
       
       // Pide datos al EHR Server
-      def ehr = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
 
       // Lookup de ehrId por subjectId
       // FIXME: esto se puede evitar si viene el dato con el paciente
@@ -388,7 +424,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         ehr.get( path: 'api/v1/compositions',
+         server.get( path: 'api/v1/compositions',
                         query: [ehrUid: ehrUid, format:'json', max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
@@ -418,10 +454,10 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    def getQueries(String format = 'json', int max = 20, int offset = 0)
    {
       def res
-      def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
-         api.get( path: 'api/v1/queries',
+         server.get( path: 'api/v1/queries',
                         query: [format: format, max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
@@ -450,10 +486,10 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    def query(String queryUid, String ehrUid, String fromDate, String format = 'json')
    {
       def res
-      def api = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
+      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
-         api.get( path: 'api/v1/queries/'+ queryUid +'/execute',
+         server.get( path: 'api/v1/queries/'+ queryUid +'/execute',
                         query: [ehrUid: ehrUid, format: format, fromDate: fromDate],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
