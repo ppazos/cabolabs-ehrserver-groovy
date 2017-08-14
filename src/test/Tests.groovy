@@ -160,6 +160,18 @@ class Tests extends GroovyTestCase {
       // add namespace only on the root
       xml_version = '<versions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openehr.org/v1">'+ xml_version +'</versions>'
       
+      // generate unique contribution uids,
+      // these are the uids in the test files
+      def contributions = ['c3ace0d0-fdf1-417f-8800-400fd360bd10','96de9ba1-f5a3-45d9-86bd-bed36e4f55d5','1c6f6995-9a7a-401d-9eaa-d5e1e9c76482']
+      contributions.each { uid ->
+         xml_version = xml_version.replace(uid, (java.util.UUID.randomUUID() as String))
+      }
+      // idem with the version uids
+      def versions = ['6de0448f-7c69-4154-a013-88f41d0df1f5', '8bfe74b6-cc1f-43a5-afc0-b410edaccb6e', '95b38b01-4daa-4f4c-9ef4-87b6352a544c']
+      versions.each { uid ->
+         xml_version = xml_version.replace(uid, (java.util.UUID.randomUUID() as String))
+      }
+      
       return xml_version
    }
    
@@ -170,22 +182,73 @@ class Tests extends GroovyTestCase {
       assert !(res.status in 400..499)
       
       res = client.getEhrs()
-      assert res.ehrs.size() > 0
-      String uid = res.ehrs[0].uid
+      String uid
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else if (res.status == 0)
+      {
+         println res.message
+      }
+      else
+      {
+         assert res.result.ehrs.size() > 0
+         uid = res.result.ehrs[0].uid
+      }
       
       def PS = File.separator
       
       def xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'Vital_Signs_Summary.EN.v1_20170728024935_1.xml').text
       xml = commit_add_envelope(xml)
       res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
+
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else if (res.status == 0)
+      {
+         println res.message
+      }
+      else
+      {
+         println "Commit OK!"
+      }
       
       xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'Psychotherapy_Note.EN.v1_20170724075238_1.xml').text
       xml = commit_add_envelope(xml)
       res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
       
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else if (res.status == 0)
+      {
+         println res.message
+      }
+      else
+      {
+         println "Commit OK!"
+      }
+      
       xml = new File('.'+ PS +'resources'+ PS +'production_instances'+ PS +'simple_encounter_en.v1_20170728025738_1.xml').text
       xml = commit_add_envelope(xml)
       res = client.commit(uid, xml, 'orgman', 'TestEMR') // is xml for now
+      
+      if (res.status in 400..499)
+      {
+         println res.message
+      }
+      else if (res.status == 0)
+      {
+         println res.message
+      }
+      else
+      {
+         println "Commit OK!"
+      }
    }
    
 /*

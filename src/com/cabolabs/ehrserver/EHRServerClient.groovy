@@ -102,6 +102,13 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: 'ehrserver.login.success'
          ] //res.responseData.token
       }
+      catch (java.net.UnknownHostException e)
+      {
+         return [
+            status: 0,
+            message: 'noconnection'
+         ]
+      }
       catch (Exception e)
       {
          /*
@@ -282,7 +289,6 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    def getEhrs()
    {
       def res
-      def ehrs
 
       try
       {
@@ -294,25 +300,41 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          { resp, json ->
          
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
-            ehrs = json
+            res = [
+               status: resp.status,
+               result: json,
+               message: 'ehrserver.ehrs.success'
+            ] 
             //println "JSON "+ ehrs +" "+ ehrs.getClass()
          }
       }
-      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      catch (java.net.UnknownHostException e)
+      {
+         res = [
+            status: 0,
+            message: 'noconnection'
+         ]
+      }
+      /*
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad, usa UnknownHostException
       {
          println "A1"
          log.error( e.message )
          return
       }
+      */
       catch (groovyx.net.http.HttpResponseException e)
       {
          println "A2 "+ e.message +" "+ e.cause
          log.error( e.message )
          //log.error( e.response.data.message.text() )
-         return
+         res = [
+            status: e.response.status,
+            message: e.response.data.message
+         ]
       }
       
-      return ehrs
+      return res
       
    } // getEhrs
    
@@ -335,34 +357,54 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
          
+            println data
+            
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
-            res = data
+            res = [
+               status: resp.status,
+               message: data.message
+            ]
             //println res.data // null
             //println res.data.type // null
-            println res.code +' '+res.message
+            //println 'cccc> '+ res.code +' '+res.message // code is null for commit success
             
             if (resp.status in 200..299)
             {
                println "Status OK: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
             }
-            else
+            else // on this case an exception is thrown
             {
                println "Status ERROR: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
             }
          }
       }
-      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      catch (java.net.UnknownHostException e)
       {
-         println "XXX"
-         log.error( e.message )
-         return
+         res = [
+            status: 0,
+            message: 'noconnection'
+         ]
       }
+      /*
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad, usa UnknownHostException
+      {
+         log.error( e.message )
+         res = [
+            status: e.response.status,
+            message: e.message
+         ]
+      }
+      */
       catch (groovyx.net.http.HttpResponseException e)
       {
-         println "YYY "+ e.response.status.toString() +' "'+ e.message +'" '+ e.response.data.toString() +' '+ e.response.data.getClass() // XML nodechild
+         // e.message == Bad Request
+         //println "YYY "+ e.response.status.toString() +' "'+ e.message +'" '+ e.response.data.toString() +' '+ e.response.data.getClass() // XML nodechild
          log.error( e.message )
          //log.error( e.response.data.message.text() )
-         return
+         res = [
+            status: e.response.status,
+            message: e.response.data.message
+         ]
       }
       
       return res
