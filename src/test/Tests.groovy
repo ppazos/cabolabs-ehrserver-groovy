@@ -25,7 +25,7 @@ class Tests extends GroovyTestCase {
    {
       println "tearDown\n"
    }
-   
+/*
    void test_login_ok()
    {
       println "test_login_ok"
@@ -66,6 +66,7 @@ class Tests extends GroovyTestCase {
       assert token == null
       //println "login this token " + client.config.token
    }
+*/
    
 /*
    void test_profile()
@@ -112,6 +113,20 @@ class Tests extends GroovyTestCase {
       assert ehr.uid == uid
    }
    */
+   
+   void test_creat_ehr()
+   {
+      println "test_creat_ehr"
+      def res = client.login('orgman', 'orgman', '123456') // stores token internally
+      println res
+      
+      
+      res = client.createEhr('123-123-123')
+      println res
+      
+      
+      assert true
+   }
    
 /*
    void test_commit()

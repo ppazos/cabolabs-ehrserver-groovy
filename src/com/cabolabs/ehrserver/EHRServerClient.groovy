@@ -339,6 +339,55 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    } // getEhrs
    
    
+   def createEhr(String subjectUid)
+   {
+      def res, ehrUid
+      try
+      {
+         // Sin URLENC da error null pointer exception sin mas datos... no se porque es. PREGUNTAR!
+         res = server.post(
+            path:'api/v1/ehrs',
+            requestContentType: ContentType.URLENC,
+            query: [format:'json'],
+            body: [subjectUid: subjectUid],
+            headers: ['Authorization': 'Bearer '+ config.token]
+         )
+         
+         println res.responseData
+         
+         return [
+            status: res.status,
+            ehrUid: res.responseData.uid,
+            organizationUid: res.responseData.organizationUid,
+            message: 'ehrserver.createEHR.success'
+         ]
+      }
+      catch (java.net.UnknownHostException e)
+      {
+         return [
+            status: 0,
+            message: 'noconnection'
+         ]
+      }
+      catch (Exception e)
+      {
+      /* println e.response.data
+      [result:
+        [code:EHRSERVER::API::RESPONSE_CODES::998, 
+         message:The patient 123-123-123 already has an EHR with UID 23e96447-3b6e-45ba-b649-d0d4eb9482e9, type:AR
+        ]
+      ]
+      */
+         return [
+            status: e.response.status,
+            message: e.message,
+            description: e.response.data.result.message
+         ]
+         
+      }
+   }
+   
+   
    // TODO: add commit and test
    def commit(String ehrUid, String xml, String committer, String systemId)
    {
