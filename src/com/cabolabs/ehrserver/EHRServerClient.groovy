@@ -109,6 +109,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: 'noconnection'
          ]
       }
+      catch (org.apache.http.conn.HttpHostConnectException e)
+      {
+         // When there is no connection to the server, therr is no response in the exception
+         return [
+            status: -1,
+            message: e.message
+         ]
+      }
       catch (Exception e)
       {
          /*
@@ -139,7 +147,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          else
          {
             return [
-               status: e.response.status,
+               status: ((e.response) ? e.response.status : 0),
                message: e.message
             ]
          }
@@ -399,6 +407,23 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: 'noconnection'
          ]
       }
+      catch (org.apache.http.conn.HttpHostConnectException e)
+      {
+         // When there is no connection to the server, therr is no response in the exception
+         return [
+            status: -1,
+            message: e.message
+         ]
+      }
+      catch (java.lang.IllegalStateException e)
+      {
+         println e
+         // When there is no connection to the server, therr is no response in the exception
+         return [
+            status: -1,
+            message: e.message
+         ]
+      }
       catch (Exception e)
       {
       /* println e.response.data
@@ -409,7 +434,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       ]
       */
          return [
-            status: e.response.status,
+            status: ((e.hasProperty('response')) ? e.response.status : 0),
             message: e.message,
             description: e.response.data.result.message
          ]
