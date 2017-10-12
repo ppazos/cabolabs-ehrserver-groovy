@@ -298,16 +298,15 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    } // getEhrIdByPatientId
    
    
-   def getEhrs()
+   def getEhrs(int max = 10, int offset = 0)
    {
       def res
-
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
          server.get( path: 'api/v1/ehrs',
-                     query: [format:'json'],
+                     query: [format:'json', max: max, offset: offset],
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
          

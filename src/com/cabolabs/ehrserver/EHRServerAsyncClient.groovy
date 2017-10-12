@@ -300,7 +300,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    } // getEhrIdByPatientId
    
    
-   def getEhrs()
+   def getEhrs(int max = 10, int offset = 0)
    {
       def res, resp
       try
@@ -308,7 +308,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
          res = server.get( path: 'api/v1/ehrs',
-                     query: [format:'json'],
+                     query: [format:'json', max: max, offset: offset],
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, json ->
          
@@ -471,39 +471,54 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, xml ->
          
+            if (response.status in 200..299)
+            {
+               println "Status OK: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
+            }
+            else // on this case an exception is thrown
+            {
+               println "Status ERROR: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
+            }
+         
             [
                status: response.status,
                message: xml.message
             ]
          }
          
+         println "a"
          resp = res.get()
-          
-         //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
+
+         println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
          //println res.data // null
          //println res.data.type // null
          //println 'cccc> '+ res.code +' '+res.message // code is null for commit success
-         
-         if (resp.status in 200..299)
-         {
-            println "Status OK: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
-         }
-         else // on this case an exception is thrown
-         {
-            println "Status ERROR: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
-         }
-         
+
          return resp
+      }
+      catch (java.util.concurrent.ExecutionException e)
+      {
+         println e.getCause().getClass()
+         println e.getCause().getMessage()
+         
+         return [
+            status: -1,
+            message: e.message
+         ]
       }
       catch (java.net.UnknownHostException e)
       {
-         res = [
+         log.error( e.message )
+         
+         return [
             status: 0,
             message: 'noconnection'
          ]
       }
       catch (org.apache.http.conn.HttpHostConnectException e)
       {
+         log.error( e.message )
+         
          // When there is no connection to the server, therr is no response in the exception
          return [
             status: -1,
@@ -512,17 +527,16 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       }
       catch (groovyx.net.http.HttpResponseException e)
       {
+         println "hre"
          // e.message == Bad Request
          //println "YYY "+ e.response.status.toString() +' "'+ e.message +'" '+ e.response.data.toString() +' '+ e.response.data.getClass() // XML nodechild
          log.error( e.message )
          //log.error( e.response.data.message.text() )
-         res = [
+         return [
             status: e.response.status,
             message: e.response.data.message
          ]
       }
-      
-      return res
    }
    
    def getContributions(String ehrUid, int max = 20, int offset = 0)
