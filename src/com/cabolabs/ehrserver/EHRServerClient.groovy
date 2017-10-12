@@ -338,6 +338,36 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
    } // getEhrs
    
+   /*
+   def createEhr(String subjectUid)
+   {
+      def ehr
+      server.post( path: 'api/v1/ehrs/'+ehrUid+'/compositions',
+                     requestContentType: URLENC,
+                     query: [
+                        subjectUid: subjectUid,
+                        format: 'json'
+                     ],
+                     body: [],
+                     headers: ['Authorization': 'Bearer '+ config.token] )
+      { resp, data ->
+         
+         //println data
+         
+         if (resp.status in 200..299)
+         {
+            println "Status OK: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
+            ehr = data
+         }
+         else // on this case an exception is thrown
+         {
+            println "Status ERROR: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
+         }
+      }
+      
+      return ehr
+   }
+   */
    
    def createEhr(String subjectUid)
    {
@@ -608,4 +638,54 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
    } // query
    
+   
+   def getTemplates()
+   {
+      def res
+
+      try
+      {
+         server.get( path: 'api/v1/templates',
+                     query: [format:'json'],
+                     headers: ['Authorization': 'Bearer '+ config.token] )
+         { resp, json ->
+         
+            //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
+            res = [
+               status: resp.status,
+               result: json,
+               message: 'ehrserver.templates.success'
+            ] 
+            //println "JSON "+ ehrs +" "+ ehrs.getClass()
+         }
+      }
+      catch (java.net.UnknownHostException e)
+      {
+         res = [
+            status: 0,
+            message: 'noconnection'
+         ]
+      }
+      /*
+      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad, usa UnknownHostException
+      {
+         println "A1"
+         log.error( e.message )
+         return
+      }
+      */
+      catch (groovyx.net.http.HttpResponseException e)
+      {
+         println "A2 "+ e.message +" "+ e.cause
+         log.error( e.message )
+         //log.error( e.response.data.message.text() )
+         res = [
+            status: e.response.status,
+            message: e.response.data.message
+         ]
+      }
+      
+      return res
+      
+   }
 }
