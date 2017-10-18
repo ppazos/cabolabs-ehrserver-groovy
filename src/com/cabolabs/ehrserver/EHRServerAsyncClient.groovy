@@ -470,7 +470,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      body: compo,
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, xml ->
-         
+            /*
             if (response.status in 200..299)
             {
                println "Status OK: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
@@ -479,17 +479,16 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             {
                println "Status ERROR: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
             }
-         
+            */
             [
                status: response.status,
                message: xml.message
             ]
          }
          
-         println "a"
          resp = res.get()
 
-         println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
+         //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
          //println res.data // null
          //println res.data.type // null
          //println 'cccc> '+ res.code +' '+res.message // code is null for commit success
