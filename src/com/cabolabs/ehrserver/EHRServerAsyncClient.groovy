@@ -32,7 +32,7 @@ class EhrServerAsyncClient {
       token: '' // set from login
    ]
    
-   def EhrServerAsyncClient(String protocol, String ip, int port, String path)
+   def EhrServerAsyncClient(String protocol, String ip, int port, String path, int poolSize = 10)
    {
       config.server.protocol = protocol
       config.server.ip = ip
@@ -43,7 +43,7 @@ class EhrServerAsyncClient {
       
       
       server = new AsyncHTTPBuilder(
-             poolSize : 10, // TODO: param
+             poolSize : poolSize,
              uri : config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
              
       server.encoderRegistry = new EncoderRegistry( charset: 'utf-8' ) // avoids issues sending spanish accentuated words
@@ -436,6 +436,8 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       }
       catch (Exception e)
       {
+      println e
+      println e.message
       /* println e.response.data
       [result:
         [code:EHRSERVER::API::RESPONSE_CODES::998, 
@@ -453,7 +455,6 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    }
    
    
-   // TODO: add commit and test
    def commit(String ehrUid, String compo, String committer, String systemId)
    {
       def res, resp

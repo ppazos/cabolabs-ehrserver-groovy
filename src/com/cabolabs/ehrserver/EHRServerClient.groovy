@@ -446,7 +446,6 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    }
    
    
-   // TODO: add commit and test
    def commit(String ehrUid, String xml, String committer, String systemId)
    {
       def res
