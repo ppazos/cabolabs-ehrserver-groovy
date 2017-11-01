@@ -6,6 +6,7 @@ import java.security.KeyStore
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
 import static groovyx.net.http.ContentType.XML
+import static groovyx.net.http.ContentType.JSON
 
 /**
  * TODO: show status code on exceptions: e.response.status.toString() + e.message << status=400 message=Bad Request
@@ -657,7 +658,6 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    def query(String queryUid, String ehrUid, String fromDate, String format = 'json')
    {
       def res
-      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
       try
       {
          server.get( path: 'api/v1/queries/'+ queryUid +'/execute',
@@ -687,6 +687,37 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       return res
       
    } // query
+   
+   def executeGivenQuery(String query, String ehrUid)
+   {
+      def res, resp
+      
+      try
+      {
+         res = server.post( path: '/api/v1/query/composition/execute',
+                     requestContentType: JSON,
+                     query: [
+                        format: 'json'
+                     ],
+                     body: query,
+                     headers: ['Authorization': 'Bearer '+ config.token] )
+         { response, json ->
+
+            [
+               status: response.status,
+               data: json
+            ]
+         }
+         
+         resp = res.get()
+
+         return resp
+      }
+      catch (Exception e)
+      {
+         println e.message
+      }
+   }
    
    
    def getTemplates()
