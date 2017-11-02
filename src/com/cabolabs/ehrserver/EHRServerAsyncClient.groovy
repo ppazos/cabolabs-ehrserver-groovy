@@ -583,42 +583,51 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
    /**
     * Retrieves clinical document indexes from an EHR, to get the content, use a composition uid on getComposition()
     */
-   def getCompositions(String ehrUid, int max = 20, int offset = 0)
+   def getCompositions(String ehrUid, int max = 20, int offset = 0, String archetypeId)
    {
       def res
       
-      // Pide datos al EHR Server
-      //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
-
       // Lookup de ehrId por subjectId
       // FIXME: esto se puede evitar si viene el dato con el paciente
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
          // Para obtener la respuesta del XML que devuelve el servidor, se accede al campo "response" en la exception.
-         server.get( path: 'api/v1/compositions',
-                        query: [ehrUid: ehrUid, format:'json', max: max, offset: offset],
+         res = server.get( path: 'api/v1/compositions',
+                        query: [ehrUid: ehrUid, format:'json', max: max, offset: offset, archetypeId: archetypeId],
                         headers: ['Authorization': 'Bearer '+ config.token] )
-         { resp, json ->
+         { response, json ->
          
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
-            res = json
+            
+            //res = json
             //println "JSON "+ ehrs +" "+ ehrs.getClass()
+            
+            [
+               status: response.status,
+               result: json,
+               message: 'ehrserver.compositions.success'
+            ]
          }
+         
+         return res.get()
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
       {
-         log.error( e.message )
-         return
+         return [
+            status: -1,
+            message: e.message
+         ]
       }
       catch (groovyx.net.http.HttpResponseException e)
       {
          log.error( e.response.data )
          println "ERROR: "+ e.response.data +" "+ e. message
-         return
+         return [
+            status: e.response.status,
+            message: e.response.data.message
+         ]
       }
-      
-      return res
       
    } // getConmpositions
 
@@ -694,7 +703,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       
       try
       {
-         res = server.post( path: '/api/v1/query/composition/execute',
+         res = server.post( path: 'api/v1/query/composition/execute',
                      requestContentType: JSON,
                      query: [
                         format: 'json'
