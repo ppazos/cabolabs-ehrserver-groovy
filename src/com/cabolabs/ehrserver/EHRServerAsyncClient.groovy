@@ -12,16 +12,16 @@ import static groovyx.net.http.ContentType.JSON
  * TODO: show status code on exceptions: e.response.status.toString() + e.message << status=400 message=Bad Request
  * on case of 4xx or 5xx errors, the body of the response with the error message is on e.response.data
  */
- 
+
 
 class EhrServerAsyncClient {
 
    // TODO: operation here and job to free the cache
    def cache = [:]
-   
+
    def server
-   
-   private Logger log = Logger.getLogger(EhrServerAsyncClient.class) 
+
+   private Logger log = Logger.getLogger(EhrServerAsyncClient.class)
 
    def config = [
       server: [
@@ -32,7 +32,7 @@ class EhrServerAsyncClient {
       ],
       token: '' // set from login
    ]
-   
+
    def EhrServerAsyncClient(String protocol, String ip, int port, String path, int poolSize = 10)
    {
       config.server.protocol = protocol
@@ -41,20 +41,33 @@ class EhrServerAsyncClient {
 
       if (!path.endsWith('/')) path += '/'
       config.server.path = path
-      
-      
+
+
       server = new AsyncHTTPBuilder(
              poolSize : poolSize,
              uri : config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
-             
+
       server.encoderRegistry = new EncoderRegistry( charset: 'utf-8' ) // avoids issues sending spanish accentuated words
-      
+
+      server.handler.failure = { response, data ->
+
+         response.setData(data)
+         //String headers = ""
+         //response.headers.each {
+         //   headers = headers+"${it.name} : ${it.value}\n"
+         //}
+         //throw new HttpResponseException(response.getStatus(),"HTTP call failed. Status code: ${response.getStatus()}\n${headers}\n"+
+         //                                "Response: "+(response as HttpResponseDecorator).getData())
+         throw new HttpResponseException(response as HttpResponseDecorator)
+         return response
+      }
+
       if (protocol.toLowerCase().startsWith('https'))
       {
-         println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL 
+         println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL
 Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests
 cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.crt -keystore store.jks -storepass test1234"""
-                    
+
          /*
           * change these lines to use your keystore.
           */
@@ -63,13 +76,13 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          getClass().getResource( "/store.jks" ).withInputStream {
             keyStore.load( it, "test1234".toCharArray() )
          }
-         
+
          server.client.connectionManager.schemeRegistry.register( new Scheme("https", 443, new SSLSocketFactory(keyStore)) )
       }
-      
+
       println 'Base URL: '+ config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path
    }
-   
+
    /**
     * Set token directly from organization API key, no need to call login on this case.
     */
@@ -78,7 +91,81 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       config.token = token
       return token
    }
-   
+
+   def handleExceptions(Exception e, String action, Exception owner = null)
+   {
+      switch (e)
+      {
+         case java.util.concurrent.ExecutionException: // owner of the real cause
+
+            return handleExceptions(e.getCause(), action, e)
+
+         break
+         case java.net.UnknownHostException: // server down
+
+            return [
+               status: 0,
+               message: 'noconnection'
+            ]
+
+         break
+         case org.apache.http.conn.HttpHostConnectException: // nwtwork problem, e.g. timeout?
+
+            return [
+               status: -1,
+               message: e.message
+            ]
+
+         break
+         case groovyx.net.http.HttpResponseException: // 40X, e.g. 401 Unauthorized
+
+            // This is a bug, data is null even the service returns a JSON body, get data is empty,
+            // but when data is set from the custom error handler failure{} we get the response body!
+            //println e.response.getData() // null
+            //println e.response.getContentType() // application/json
+            //println e.response.getClass() // groovyx.net.http.HttpResponseDecorator
+            //println e.response.status // int HTTP Response Status
+
+            //if (owner) println owner.response.getData() // groovy.lang.MissingPropertyException: No such property: response for class: java.util.concurrent.ExecutionException
+
+            //println e.response.data.result.message // path for login errors
+            def message
+            if (action == 'login') message = e.response.data.result.message
+            else message =  e.response.data.message
+
+            return [
+               status: e.response.status,
+               message: message ?: e.message
+            ]
+
+         break
+         default:
+            println 'client '+ action +' '+ e.getClass()
+            e.printStackTrace()
+            return [
+               status: -2,
+               message: e.message
+            ]
+      }
+
+      /*
+      return [
+         status: ((e.response) ? e.response.status : 0),
+         message: e.message
+      ]
+
+      catch (java.lang.IllegalStateException e)
+      {
+         println e
+         // When there is no connection to the server, therr is no response in the exception
+         return [
+            status: -1,
+            message: e.message
+         ]
+      }
+      */
+   }
+
    /**
     * Get token from login endpoint.
     */
@@ -90,9 +177,10 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          // Sin URLENC da error null pointer exception sin mas datos... no se porque es. PREGUNTAR!
          res = server.post(
             path:'api/v1/login',
-            requestContentType: ContentType.URLENC,
-            query: [format:'json'],
-            body: [username: username, password: password, organization: orgnumber]
+            requestContentType: ContentType.TEXT, //ContentType.URLENC,
+            //query: [format:'json'],
+            //body: [username: username, password: password, organization: orgnumber]
+            query: [format:'json', username: username, password: password, organization: orgnumber],
          ) { response, json ->
 
             [
@@ -101,71 +189,24 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                message: 'ehrserver.login.success'
             ]
          }
-         
+
          resp = res.get()
          //println resp
          config.token = resp.token
-         
+
          return resp
-      }
-      catch (java.net.UnknownHostException e)
-      {
-         return [
-            status: 0,
-            message: 'noconnection'
-         ]
-      }
-      catch (org.apache.http.conn.HttpHostConnectException e)
-      {
-         // When there is no connection to the server, therr is no response in the exception
-         return [
-            status: -1,
-            message: e.message
-         ]
       }
       catch (Exception e)
       {
-         println e.message
-         /*
-         println e.response
-         println e.response.status
-         println e.response.responseData
-         */
-         //println e.getClass() // groovyx.net.http.HttpResponseException
-         //println e.message
-         //e.printStackTrace(System.out)
-         if (e.message == "Unauthorized")
-         {
-            assert e.response.responseData.type == "AR"
-            /*
-            {
-                "result": {
-                    "type": "AR",
-                    "message": "No matching account",
-                    "code": "EHRSERVER::API::RESPONSE_CODES::e01.0001"
-                }
-            }
-            */
-            return [
-               status: e.response.status,
-               message: 'ehrserver.login.fail'
-            ]
-         }
-         else
-         {
-            return [
-               status: ((e.response) ? e.response.status : 0),
-               message: e.message
-            ]
-         }
+         return handleExceptions(e, 'login')
       }
    }
-   
+
    def Object getProfile(String username)
    {
       def res
       def profile
-      
+
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
@@ -198,14 +239,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
       }
 
       return profile
-      
+
    } // getProfile
-   
+
    def Object getEhr(String uid)
    {
       def res
       def ehr
-      
+
       try
       {
          // Si ocurre un error (status >399), tira una exception porque el defaultFailureHandler asi lo hace.
@@ -214,46 +255,47 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                         query: [format:'json'],
                         headers: ['Authorization': 'Bearer '+ config.token] )
 
-         println res
          ehr = res.data
       }
-      catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
+      catch (Exception e) // no hay conectividad
       {
-         log.error( e.message )
-         return
+         return handleExceptions(e, 'getEhr')
       }
+
+      /*
       catch (groovyx.net.http.HttpResponseException e)
       {
          // puedo acceder al response usando la excepci?n!
          // 500 class groovyx.net.http.HttpResponseDecorator
          println e.response.status.toString() +" "+ e.response.class.toString()
-         
+
          // errorEHR no encontrado para el paciente $subjectId, se debe crear un EHR para el paciente
          println e.response.data
-         
+
          // WARNING: es el XML parseado, no el texto en bruto!
          // class groovy.util.slurpersupport.NodeChild
          println e.response.data.getClass()
-         
+
          // Procesando el XML
          println e.response.data.code.text() // error
          println e.response.data.message.text() // el texto
-         
+
          // text/xml
          println e.response.contentType
-         
+
          // TODO: log a disco
          // no debe serguir si falla el lookup
          //render "Ocurrio un error al obtener el ehr del paciente "+ e.message
          log.error( e.response.data.message.text() )
          return
       }
-      
+      */
+
       return ehr
-      
+
    } // getEhr
-   
-   
+
+
    def Object getEhrIdByPatientId(String patientUid)
    {
       def res
@@ -277,30 +319,30 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          // puedo acceder al response usando la excepci?n!
          // 500 class groovyx.net.http.HttpResponseDecorator
          println e.response.status.toString() +" "+ e.response.class.toString()
-         
+
          // errorEHR no encontrado para el paciente $subjectId, se debe crear un EHR para el paciente
          println e.response.data
-         
+
          // WARNING: es el XML parseado, no el texto en bruto!
          // class groovy.util.slurpersupport.NodeChild
          println e.response.data.getClass()
-         
+
          // Procesando el XML
          println e.response.data.code.text() // error
          println e.response.data.message.text() // el texto
-         
+
          // text/xml
          println e.response.contentType
-         
+
          log.error( e.response.data.message.text() )
          return
       }
-      
+
       return ehr
-      
+
    } // getEhrIdByPatientId
-   
-   
+
+
    def getEhrs(int max = 10, int offset = 0)
    {
       def res, resp
@@ -312,14 +354,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      query: [format:'json', max: max, offset: offset],
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, json ->
-         
+
             [
                status: response.status,
                result: json,
                message: 'ehrserver.ehrs.success'
             ]
          }
-         
+
          resp = res.get()
          return resp
       }
@@ -348,11 +390,11 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: e.response.data.message
          ]
       }
-      
+
       return res
-      
+
    } // getEhrs
-   
+
    /*
    def createEhr(String subjectUid)
    {
@@ -366,9 +408,9 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      body: [],
                      headers: ['Authorization': 'Bearer '+ config.token] )
       { resp, data ->
-         
+
          //println data
-         
+
          if (resp.status in 200..299)
          {
             println "Status OK: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
@@ -379,11 +421,11 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             println "Status ERROR: "+ resp.statusLine.statusCode +' '+ resp.statusLine.reasonPhrase
          }
       }
-      
+
       return ehr
    }
    */
-   
+
    def createEhr(String subjectUid)
    {
       def res, ehrUid, resp
@@ -397,7 +439,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             body: [subjectUid: subjectUid],
             headers: ['Authorization': 'Bearer '+ config.token])
          { response, json ->
-         
+
             [
                status: response.status,
                ehrUid: json.uid,
@@ -405,61 +447,33 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                message: 'ehrserver.createEHR.success'
             ]
          }
-         
-         resp = res.get()
-         println resp
+
+         resp = res.get() // [status: , ehrUid: , organizationUid: , message: ]
 
          return resp
       }
-      catch (java.net.UnknownHostException e)
-      {
-         return [
-            status: 0,
-            message: 'noconnection'
-         ]
-      }
-      catch (org.apache.http.conn.HttpHostConnectException e)
-      {
-         // When there is no connection to the server, therr is no response in the exception
-         return [
-            status: -1,
-            message: e.message
-         ]
-      }
-      catch (java.lang.IllegalStateException e)
-      {
-         println e
-         // When there is no connection to the server, therr is no response in the exception
-         return [
-            status: -1,
-            message: e.message
-         ]
-      }
       catch (Exception e)
       {
-      println e
-      println e.message
-      /* println e.response.data
-      [result:
-        [code:EHRSERVER::API::RESPONSE_CODES::998, 
-         message:The patient 123-123-123 already has an EHR with UID 23e96447-3b6e-45ba-b649-d0d4eb9482e9, type:AR
-        ]
-      ]
-      */
+         return handleExceptions(e, 'createEhr')
+      }
+
+      /*
+      catch (Exception e)
+      {
          return [
             status: ((e.hasProperty('response')) ? e.response.status : 0),
             message: e.message,
             description: e.response.data.result.message
          ]
-         
       }
+      */
    }
-   
-   
+
+
    def commit(String ehrUid, String compo, String committer, String systemId)
    {
       def res, resp
-      
+
       try
       {
          res = server.post( path: 'api/v1/ehrs/'+ehrUid+'/compositions',
@@ -472,7 +486,9 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      body: compo,
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, xml ->
-            /*
+
+            //println "commit data result "+ xml
+
             if (response.status in 200..299)
             {
                println "Status OK: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
@@ -481,13 +497,13 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             {
                println "Status ERROR: "+ response.statusLine.statusCode +' '+ response.statusLine.reasonPhrase
             }
-            */
-            [
+
+            return [
                status: response.status,
                message: xml.message
             ]
          }
-         
+
          resp = res.get()
 
          //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
@@ -497,53 +513,16 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
 
          return resp
       }
-      catch (java.util.concurrent.ExecutionException e)
+      catch (Exception e) // no hay conectividad
       {
-         println e.getCause().getClass()
-         println e.getCause().getMessage()
-         
-         return [
-            status: -1,
-            message: e.message
-         ]
-      }
-      catch (java.net.UnknownHostException e)
-      {
-         log.error( e.message )
-         
-         return [
-            status: 0,
-            message: 'noconnection'
-         ]
-      }
-      catch (org.apache.http.conn.HttpHostConnectException e)
-      {
-         log.error( e.message )
-         
-         // When there is no connection to the server, therr is no response in the exception
-         return [
-            status: -1,
-            message: e.message
-         ]
-      }
-      catch (groovyx.net.http.HttpResponseException e)
-      {
-         println "hre"
-         // e.message == Bad Request
-         //println "YYY "+ e.response.status.toString() +' "'+ e.message +'" '+ e.response.data.toString() +' '+ e.response.data.getClass() // XML nodechild
-         log.error( e.message )
-         //log.error( e.response.data.message.text() )
-         return [
-            status: e.response.status,
-            message: e.response.data.message
-         ]
+         return handleExceptions(e, 'commit')
       }
    }
-   
+
    def getContributions(String ehrUid, int max = 20, int offset = 0)
    {
       def res
-      
+
       // Pide datos al EHR Server
       //def server = new RESTClient(config.server.protocol + config.server.ip +':'+ config.server.port + config.server.path)
 
@@ -557,7 +536,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                         query: [format:'json', max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, json ->
-         
+
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
             res = json
             //println json
@@ -575,18 +554,18 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          println "ERROR: "+ e.response.data +" "+ e. message
          return
       }
-      
+
       return res
-      
+
    } // getContributions
-   
+
    /**
     * Retrieves clinical document indexes from an EHR, to get the content, use a composition uid on getComposition()
     */
    def getCompositions(String ehrUid, int max = 20, int offset = 0, String archetypeId)
    {
       def res
-      
+
       // Lookup de ehrId por subjectId
       // FIXME: esto se puede evitar si viene el dato con el paciente
       try
@@ -597,19 +576,19 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                         query: [ehrUid: ehrUid, format:'json', max: max, offset: offset, archetypeId: archetypeId],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { response, json ->
-         
+
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
-            
+
             //res = json
             //println "JSON "+ ehrs +" "+ ehrs.getClass()
-            
+
             [
                status: response.status,
                result: json,
                message: 'ehrserver.compositions.success'
             ]
          }
-         
+
          return res.get()
       }
       catch (org.apache.http.conn.HttpHostConnectException e) // no hay conectividad
@@ -628,7 +607,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: e.response.data.message
          ]
       }
-      
+
    } // getConmpositions
 
 
@@ -642,7 +621,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                         query: [format: format, max: max, offset: offset],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
-         
+
             res = data // json (class groovy.json.internal.LazyMap) or xml
          }
       }
@@ -657,10 +636,10 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          println "ERROR: "+ e.response.data +" "+ e. message
          return
       }
-      
+
       return res
    }
-   
+
    /**
     * Runs an existing query and retrieves the result sets.
     */
@@ -673,7 +652,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                         query: [ehrUid: ehrUid, format: format, fromDate: fromDate],
                         headers: ['Authorization': 'Bearer '+ config.token] )
          { resp, data ->
-         
+
             //println resp // groovyx.net.http.HttpResponseDecorator@1ac3d0c
             //println resp.data // nyll
 
@@ -692,15 +671,15 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          println "ERROR: "+ e.response.data +" "+ e. message
          return
       }
-      
+
       return res
-      
+
    } // query
-   
+
    def executeGivenQuery(String query, String ehrUid)
    {
       def res, resp
-      
+
       try
       {
          res = server.post( path: 'api/v1/query/composition/execute',
@@ -717,7 +696,7 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                data: json
             ]
          }
-         
+
          resp = res.get()
 
          return resp
@@ -727,8 +706,8 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
          println e.message
       }
    }
-   
-   
+
+
    def getTemplates()
    {
       def res, resp
@@ -738,14 +717,14 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
                      query: [format:'json'],
                      headers: ['Authorization': 'Bearer '+ config.token] )
          { response, json ->
-         
+
             [
                status: response.status,
                result: json,
                message: 'ehrserver.templates.success'
-            ] 
+            ]
          }
-         
+
          resp = res.get()
          //println resp
 
@@ -776,8 +755,8 @@ cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.
             message: e.response.data.message
          ]
       }
-      
+
       return res
-      
+
    }
 }
