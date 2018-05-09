@@ -65,13 +65,15 @@ class EhrServerAsyncClient {
       if (protocol.toLowerCase().startsWith('https'))
       {
          println """Extra config needs to be done for HTTPS connections, see https://github.com/jgritman/httpbuilder/wiki/SSL
-Use the cabolabs2.crt certificate and the store.jks keystore from this project to run the tests
-cabolabs-ehrserver-groovy>keytool -importcert -alias "cabo2-ca" -file cabolabs2.crt -keystore store.jks -storepass test1234"""
+Check the README.md for more information https://github.com/ppazos/cabolabs-ehrserver-groovy/blob/master/README.md"""
 
          /*
           * change these lines to use your keystore.
           */
          def keyStore = KeyStore.getInstance( KeyStore.defaultType )
+
+         //println "keystore :"+ getClass().getResource( "/store.jks" )
+
          //println getClass().getResource( "/" ) // /bin
          getClass().getResource( "/store.jks" ).withInputStream {
             keyStore.load( it, "test1234".toCharArray() )
